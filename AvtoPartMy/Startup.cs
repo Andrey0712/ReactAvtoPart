@@ -1,5 +1,8 @@
+using AvtoPartMy.Models;
 using Data;
 using Data.Entities.Identity;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -38,7 +41,13 @@ namespace AvtoPartMy
                 .AddEntityFrameworkStores<AppEFContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddControllersWithViews();
+            
+
+            services.AddTransient<IValidator<RegisterViewModels>, UserValidator>();
+
+            services.AddControllersWithViews().AddFluentValidation();
+
+            //services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
