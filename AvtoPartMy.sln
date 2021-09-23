@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31613.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvtoPartMy", "AvtoPartMy\AvtoPartMy.csproj", "{9616355B-4FE8-410B-85E3-F3DAAA9DC6E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvtoPartMy", "AvtoPartMy\AvtoPartMy.csproj", "{9616355B-4FE8-410B-85E3-F3DAAA9DC6E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{9613D64C-FD08-44BB-AA84-7AE891B418DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{9616355B-4FE8-410B-85E3-F3DAAA9DC6E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9616355B-4FE8-410B-85E3-F3DAAA9DC6E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9616355B-4FE8-410B-85E3-F3DAAA9DC6E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9613D64C-FD08-44BB-AA84-7AE891B418DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9613D64C-FD08-44BB-AA84-7AE891B418DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9613D64C-FD08-44BB-AA84-7AE891B418DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9613D64C-FD08-44BB-AA84-7AE891B418DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
