@@ -34,47 +34,61 @@ namespace AvtoPartMy.Controllers
         //    //});
         //    return Ok();
         //}
-        public async Task<IActionResult> Register([FromBody] RegisterViewModels model)
+        //public async Task<IActionResult> Register([FromBody] RegisterViewModels model)//сохранить юзера
+        //{
+        //    var user = new AppUser
+        //    {
+        //        Email = model.Email,
+        //        UserName = model.FirstName + " " + model.SecondName,
+        //        PhoneNumber = model.Phone,
+        //        PasswordHash = model.Password
+        //    };
+        //    var result = await _userManager.CreateAsync(user, model.Password);
+        //    _context.Users.Add(user);
+        //    _context.SaveChanges();
+        //    if (!result.Succeeded)
+        //        return BadRequest(new { message = result.Errors });
+
+        //    return Ok();
+        //}
+
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModels model)
         {
-            var user = new AppUser
+            UserValidator validationRules = new();
+            var res = validationRules.ValidateAsync(model);
+
+            //якщо модель не валідна:
+            if (!res.Result.IsValid)
+            {
+                return BadRequest(res.Result.Errors);
+            }
+
+            //шукаю користувача по емейлу.
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            //якщо такий користувач вже існує:
+            if (user != null)
+            {
+                return BadRequest(new { message = "Такий користувач вже існує" });
+            }
+
+            var userRegister = new AppUser
             {
                 Email = model.Email,
                 UserName = model.FirstName + " " + model.SecondName,
                 PhoneNumber = model.Phone,
                 PasswordHash = model.Password
             };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            _context.Users.Add(user);
+            var result = await _userManager.CreateAsync(userRegister, model.Password);
+            _context.Users.Add(userRegister);
             _context.SaveChanges();
             if (!result.Succeeded)
                 return BadRequest(new { message = result.Errors });
 
+
             return Ok();
         }
 
-        //public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModels model)
-        //{
-        //    UserValidator validationRules = new();
-        //    var res = validationRules.ValidateAsync(model);
 
-        //    //якщо модель не валідна:
-        //    if (!res.Result.IsValid)
-        //    {
-        //        return BadRequest(res.Result.Errors);
-        //    }
-
-        //    //шукаю користувача по емейлу.
-        //    var user = await _userManager.FindByEmailAsync(model.Email);
-
-        //    //якщо такий користувач вже існує:
-        //    if (user != null)
-        //    {
-        //        return BadRequest(new { message = "Такий користувач вже існує" });
-        //    }
-
-
-
-        //    return Ok();
-        //}
     }
 }
