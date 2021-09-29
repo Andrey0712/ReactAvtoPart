@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { withRouter } from "react-router-dom";
 import authService from '../../../services/auth.servie';
 import TextBoxField from '../../common/TextBoxField';
+import ReactDOM from 'react-dom';
+import classnames from "classnames";
 
 export class RegisterPage extends Component {
     state = {
@@ -10,10 +12,16 @@ export class RegisterPage extends Component {
         firstName: '',
         secondName: '',
         password: '',
-        confirmPassword: '',
-        errors: '',
-        errormessages: {
-            email: ''}
+        confirmpassword: '',
+        isvalid: true,
+        errormessage: {
+            email:'',
+            phone:'',
+            password:'',
+            confirmpassword:'',
+            firstName: '',
+            secondName: ''
+        }     
     }
 
     onChangeHandler = (e) => {
@@ -45,44 +53,130 @@ export class RegisterPage extends Component {
             this.props.history.push("/");
         }
         catch(error) {
-            console.log("Server is bad ", error.response);
+            // console.log("Server is bad ", error.response);
+
+            let answer_errors={
+                email:'',
+                phone:'',
+                password:'',
+                confirmpassword:'',
+                firstName: '',
+                secondName: ''
+            };
+
+            var res = error.response.data.errors;
+
+            if(res.Email)
+            {
+                let str = "";
+                res.Email.forEach(element => {
+                    str += element + " ";
+                    console.log(element);
+                });
+                answer_errors.email = str;
+            }
+           
+            if(res.Phone)
+            {
+                let str = "";
+                    res.Phone.forEach(element => {
+                        str += element + " ";
+                        console.log(element);
+                    });
+                    answer_errors.phone = str;
+           }
+
+           if(res.FirstName)
+           {
+               let str = "";
+                   res.FirstName.forEach(element => {
+                       str += element + " ";
+                       console.log(element);
+                   });
+                   answer_errors.firstName = str;
+           }
+
+           if(res.SecondName)
+           {
+               let str = "";
+                   res.SecondName.forEach(element => {
+                       str += element + " ";
+                       console.log(element);
+                   });
+                   answer_errors.secondName = str;
+           }
+
+           if(res.Password)
+           {
+               let str = "";
+                   res.Password.forEach(element => {
+                       str += element + " ";
+                       console.log(element);
+                   });
+                   answer_errors.password = str;
+           }
+
+           if(res.ConfirmPassword)
+           {
+               let str = "";
+                   res.ConfirmPassword.forEach(element => {
+                       str += element + " ";
+                       console.log(element);
+                   });
+                   answer_errors.confirmpassword = str;
+           }           
+           
+             this.setState({errormessage:answer_errors});
+             console.log(this.state.errormessage.confirmpassword);
         }
     }
 
     render() {
-    const { email, phone, firstName, secondName, password, confirmPassword} = this.state;
+    const { email, phone, firstName, secondName, password, confirmpassword,errormessage} = this.state;
         return (
             <div className="row">
                 <div className="offset-md-3 col-md-6">
                 <h1 className="text-center">Реєстрація</h1>
-                <form onSubmit={this.onSubmitFormHandler}>
+                <form className="row g-3 needs-validation" onSubmit= {this.onSubmitFormHandler}>
                     <TextBoxField 
                         field="email"
                         label="Електронна пошта"
                         value={email}
                         onChangeHandler={this.onChangeHandler}
-                        errors={this.errors}/>
+                        isvalid={errormessage.email.length == 0? true : false}
+                        />
+                         {!!errormessage.email && <span className="text-danger">
+                             {errormessage.email}</span>}
 
-                    <TextBoxField 
+                             <TextBoxField 
                         field="phone"
                         label="Телефон"
                         value={phone}
                         onChangeHandler={this.onChangeHandler}
-                        errors={this.errors}/>
+                        isvalid={errormessage.phone.length == 0? true : false}
+                        />
+                        {!!errormessage.phone && <span className="text-danger">
+                            {errormessage.phone}</span>}
 
                     <TextBoxField 
                         field="secondName"
                         label="Прізвище"
                         value={secondName}
                         onChangeHandler={this.onChangeHandler}
-                        errors={this.errors}/>
+                        isvalid={errormessage.secondName.length == 0? true : false}
+                        />
+                        {!!errormessage.secondName && <span className="text-danger">
+                            {errormessage.secondName}</span>}
 
                     <TextBoxField 
                         field="firstName"
                         label="Ім'я"
                         value={firstName}
                         onChangeHandler={this.onChangeHandler}
-                        errors={this.errors}/>
+                        isvalid={errormessage.firstName.length == 0? true : false}
+                        />
+                        {!!errormessage.firstName && <span className="text-danger">
+                            {errormessage.firstName}</span>}
 
                     <TextBoxField 
                         field="password"
@@ -90,15 +184,21 @@ export class RegisterPage extends Component {
                         label="Пароль"
                         value={password}
                         onChangeHandler={this.onChangeHandler}
-                        errors={this.errors}/>
+                        isvalid={errormessage.password.length == 0? true : false}
+                        />
+                        {!!errormessage.password && <span className="text-danger">
+                            {errormessage.password}</span>}
 
                     <TextBoxField 
-                        field="confirmPassword"
+                        field="confirmpassword"
                         type="password"
-                        label="Підтвердження пароль"
-                        value={confirmPassword}
+                        label="Підтвердження пароля"
+                        value={confirmpassword}
                         onChangeHandler={this.onChangeHandler}
-                        errors={this.errors}/>
+                        isvalid={errormessage.confirmpassword == 0? true : false}
+                        />
+                        {!!errormessage.confirmpassword && <span className="text-danger">
+                            {errormessage.confirmpassword}</span>}
                     
                     <button type="submit" className="btn btn-primary">Реєстрація</button>
                 </form>

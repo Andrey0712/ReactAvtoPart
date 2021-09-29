@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Data;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,23 +21,55 @@ namespace AvtoPartMy.Models
     public class UserValidator : AbstractValidator<RegisterViewModels>
     {
 
-        public UserValidator()
+        private readonly AppEFContext _appEFContext;
+        public UserValidator(AppEFContext appEFContext)
         {
-            RuleFor(x => x.Email).NotNull().NotEmpty().WithMessage("Поле не може бути пустим");
-            RuleFor(x => x.FirstName).NotNull().NotEmpty().WithMessage("Поле не може бути пустим");
-            RuleFor(x => x.SecondName).NotNull().NotEmpty().WithMessage("Поле не може бути пустим");
-            RuleFor(x => x.Phone).NotNull().NotEmpty().WithMessage("Поле не може бути пустим");
-            RuleFor(x => x.Password).NotNull().NotEmpty().WithMessage("Поле не може бути пустим");
-            RuleFor(x => x.Password).Length(5, 100).WithMessage("Пароль не може бути менше 5 символів");
-            RuleFor(x => x.ConfirmPassword).NotNull().NotEmpty().WithMessage("Поле не може бути пустим");
-            RuleFor(x => x.ConfirmPassword).Equal(x => x.Password).WithMessage("Пароль і підтверджений пароль не співпадають");
+            _appEFContext = appEFContext;
 
-
+            RuleFor(x => x.Email)
+                .NotEmpty()
+                .WithMessage("Поле Email не може бути порожнім")
+                .MinimumLength(6)
+                .EmailAddress()
+                .WithMessage("Помилка заповнення поля Email")
+                .Must(IsValidEmail)
+                .WithName("Email")
+                .WithMessage("Такий користувач вже існує");
+            RuleFor(x => x.Password)
+                .NotEmpty()
+                .WithMessage("Поле Password не може бути порожнім")
+                .MinimumLength(5)
+                .WithMessage("Пароль не може бути коротший, ніж 5 символів")
+                .Matches(@"\d")
+                .WithName("Password")
+                .WithMessage("Пароль повинен містити хоча б одну цифру");
+            RuleFor(x => x.Phone)
+                .NotEmpty()
+                .WithMessage("Поле Phone не може бути порожнім")
+                .MinimumLength(10)
+                .MaximumLength(11)
+                .WithMessage("Має бути не менше 10 і не більше 11 цифр");
+            RuleFor(x => x.ConfirmPassword)
+                .NotEmpty()
+                .WithMessage("Поле ConfirmPassword не може бути порожнім")
+                .Equal(x => x.Password)
+                .WithMessage("Введене підтвердження не співпадає з паролем");
+            RuleFor(x => x.FirstName)
+                .NotEmpty()
+                .WithMessage("Поле ім'я не може бути порожнім");
+            RuleFor(x => x.SecondName)
+                .NotEmpty()
+                .WithMessage("Поле прізвище не може бути порожнім");
 
         }
-
-
-
-
+        private bool IsValidEmail(string email)
+        {
+            var user = _appEFContext.Users.FirstOrDefault(x => x.Email == email);
+            if (user == null)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

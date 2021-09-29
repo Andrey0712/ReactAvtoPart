@@ -1,4 +1,5 @@
-﻿using AvtoPartMy.Models;
+﻿using AvtoPartMy.Constans;
+using AvtoPartMy.Models;
 using Data;
 using Data.Entities.Identity;
 using Microsoft.AspNetCore.Http;
@@ -16,13 +17,23 @@ namespace AvtoPartMy.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly AppEFContext _context;
-        public AccountController(UserManager<AppUser> userManager, AppEFContext context)
+        //private readonly AppEFContext _context;
+        //public AccountController(UserManager<AppUser> userManager, AppEFContext context)
+        //{
+        //    _userManager = userManager;
+        //    _context = context;
+        //}
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly RoleManager<AppRole> _roleManager;
+        public AccountController(UserManager<AppUser> userManager,
+                                SignInManager<AppUser> signInManager,
+                                RoleManager<AppRole> roleManager)
         {
             _userManager = userManager;
-            _context = context;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
         }
-        
+
         [HttpPost]
         [Route("register")]
         //public IActionResult Register([FromBody] RegisterViewModels model)
@@ -54,36 +65,25 @@ namespace AvtoPartMy.Controllers
 
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModels model)
         {
-            UserValidator validationRules = new();
-            var res = validationRules.ValidateAsync(model);
-
-            //якщо модель не валідна:
-            if (!res.Result.IsValid)
-            {
-                return BadRequest(res.Result.Errors);
-            }
-
-            //шукаю користувача по емейлу.
-            var user = await _userManager.FindByEmailAsync(model.Email);
-
-            //якщо такий користувач вже існує:
-            if (user != null)
-            {
-                return BadRequest(new { message = "Такий користувач вже існує" });
-            }
-
-            var userRegister = new AppUser
+            var user = new AppUser
             {
                 Email = model.Email,
-                UserName = model.FirstName + " " + model.SecondName,
-                PhoneNumber = model.Phone,
-                PasswordHash = model.Password
+                UserName = model.FirstName
+
             };
-            var result = await _userManager.CreateAsync(userRegister, model.Password);
-            _context.Users.Add(userRegister);
-            _context.SaveChanges();
+
+            var role = new AppRole
+            {
+                Name = Roles.User
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+
             if (!result.Succeeded)
                 return BadRequest(new { message = result.Errors });
+
+            await _userManager.AddToRoleAsync(user, role.Name);
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
 
 
             return Ok();
