@@ -17,21 +17,18 @@ namespace AvtoPartMy.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
-        //private readonly AppEFContext _context;
-        //public AccountController(UserManager<AppUser> userManager, AppEFContext context)
-        //{
-        //    _userManager = userManager;
-        //    _context = context;
-        //}
+        private readonly AppEFContext _context;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<AppRole> _roleManager;
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
-                                RoleManager<AppRole> roleManager)
+                                RoleManager<AppRole> roleManager,
+                                AppEFContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _context = context;
         }
 
         [HttpPost]
@@ -68,7 +65,9 @@ namespace AvtoPartMy.Controllers
             var user = new AppUser
             {
                 Email = model.Email,
-                UserName = model.FirstName
+                UserName = model.FirstName + " " + model.SecondName,
+                PhoneNumber = model.Phone,
+                PasswordHash = model.Password
 
             };
 
@@ -77,7 +76,8 @@ namespace AvtoPartMy.Controllers
                 Name = Roles.User
             };
             var result = await _userManager.CreateAsync(user, model.Password);
-
+            _context.Users.Add(user);
+               _context.SaveChanges();
             if (!result.Succeeded)
                 return BadRequest(new { message = result.Errors });
 

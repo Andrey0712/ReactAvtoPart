@@ -5,6 +5,8 @@ import TextBoxField from '../../common/TextBoxField';
 import ReactDOM from 'react-dom';
 import classnames from "classnames";
 
+
+
 export class RegisterPage extends Component {
     state = {
         email: '',
