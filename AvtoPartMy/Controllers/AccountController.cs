@@ -60,33 +60,72 @@ namespace AvtoPartMy.Controllers
         //    return Ok();
         //}
 
+        //public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModels model)
+        //{
+        //    var user = new AppUser
+        //    {
+        //        Email = model.Email,
+        //        UserName = model.FirstName
+        //        + " " + model.SecondName,
+        //        PhoneNumber = model.Phone,
+        //        PasswordHash = model.Password
+
+        //    };
+
+        //    var role = new AppRole
+        //    {
+        //        Name = Roles.User
+        //    };
+        //    var result = await _userManager.CreateAsync(user, model.Password);
+        //    //_context.Users.Add(user);
+        //    //_context.SaveChanges();
+        //    if (!result.Succeeded)
+        //        return BadRequest(new { message = result.Errors });
+
+        //    await _userManager.AddToRoleAsync(user, role.Name);
+
+        //    await _signInManager.SignInAsync(user, isPersistent: false);
+
+
+        //    return Ok();
+        //}
+
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModels model)
         {
-            var user = new AppUser
+            try
             {
-                Email = model.Email,
-                UserName = model.FirstName + " " + model.SecondName,
-                PhoneNumber = model.Phone,
-                PasswordHash = model.Password
 
-            };
+                var user = new AppUser
+                {
+                    Email = model.Email,
+                    UserName = model.FirstName
+                    //+ " " + model.SecondName,
+                    //PhoneNumber = model.Phone,
+                    //PasswordHash = model.Password
 
-            var role = new AppRole
+                };
+
+                var role = new AppRole
+                {
+                    Name = Roles.User
+                };
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (!result.Succeeded)
+                    return BadRequest(new { message = result.Errors });
+
+                await _userManager.AddToRoleAsync(user, role.Name);
+
+                await _signInManager.SignInAsync(user, isPersistent: false);
+               
+                return Ok();
+             
+            }
+            catch
             {
-                Name = Roles.User
-            };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            _context.Users.Add(user);
-               _context.SaveChanges();
-            if (!result.Succeeded)
-                return BadRequest(new { message = result.Errors });
+                return BadRequest(new { message = "Щось пішло не так - помилка з БД" });
 
-            await _userManager.AddToRoleAsync(user, role.Name);
-
-            await _signInManager.SignInAsync(user, isPersistent: false);
-
-
-            return Ok();
+            }
         }
 
 

@@ -9,6 +9,7 @@ import {
 import  Header  from './cocmponents/header';
 import RegisterPage from './cocmponents/auth/Register';
 import LoginPage from './cocmponents/auth/Login';
+ import HomePage from './cocmponents/home';
 
 
 
@@ -20,12 +21,20 @@ class App extends React.Component{
         <Header />
         <div className="container">
           <Switch>
-            <Route exact path="/">
-              <LoginPage />
+          <Route exact path="/">
+              <HomePage />
             </Route>
+
+{/* <Route exact path="/">
+              <RegisterPage />
+            </Route> */}
 
             <Route exact path="/register">
               <RegisterPage />
+            </Route>
+
+            <Route exact path="/login">
+              <LoginPage />
             </Route>
 
           </Switch>
