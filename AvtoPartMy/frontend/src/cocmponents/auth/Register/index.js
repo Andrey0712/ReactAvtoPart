@@ -199,94 +199,125 @@
 // export default withRouter(RegisterPage)
 
 import React from 'react'
-import { Formik, Form } from 'formik';
-import { useHistory } from "react-router-dom";
-import authService from '../../../services/auth.servie';
-import MyTextInput from '../../common/MyTextInput';
-import validationFields from './validation';
+import { useHistory } from 'react-router-dom';
+import { Formik, Form } from 'formik'
+import TextInput from '../../common/MyTextInput'
 import { useDispatch } from 'react-redux';
-import { REGISTER } from '../../../constants/actionTypes';
+import validate from './validation'
+import { REGISTER_AUTH,ERRORS } from '../../../constants/actionTypes';
+import { useSelector } from 'react-redux'
+import authTokenRequest from '../../../services/auth_request';
+import jwt from 'jsonwebtoken';
+import authServie from '../../../services/auth.servie';
 
-const RegisterPage = () => {
+const Register = () => {
 
     const initState = {
         email: '',
-        phone: '',
-        firstName: '',
-        secondName: '',
+        name: '',
         password: '',
-        confirmPassword: ''
+        confirmpassword: ''          
+
     }
+
     const history = useHistory();
     const dispatch = useDispatch();
 
     const onSubmitHandler = async (values) => {
 
         try {
-            const result = await authService.register(values);
-            console.log("Server is good ", result);
-            dispatch({type: REGISTER, payload: values.email});
+            const result = await authServie.register(values);
+           
+            console.log("Відправлені дані: ", values);
+            console.log("Result data:",result.data.token);
+
+            var jwt_token=result.data.token;
+
+            var verified = jwt.decode(jwt_token);            
+            console.log("Verified.roles:",verified.roles);
+            dispatch({type: REGISTER_AUTH, payload: verified});
+
+           
+            localStorage.setItem('Current user',jwt_token);
+            console.log("Local:",localStorage);
+            authTokenRequest(jwt_token);
             history.push("/");
         }
-        catch (error) {
-            console.log("Server is bad ", error.response);
-        }
+        catch (problem) {
+            //обробка помилок валідації на стороні сервера.
+            var res = problem.response.data.errors;
+                   
+            console.log("Errors:",res);
+            let answer_errors={
+                    email:'',                    
+                };
+
+            if (res.Email) {
+                let str = "";
+                res.Email.forEach(element => {
+                    str += element + " ";
+                   // console.log(element);
+                });
+                answer_errors.email = str;
+            }
+            dispatch({type:ERRORS,payloads:answer_errors.email});          
+       }
+
     }
 
+
+    const {errorvalid} = useSelector(res=>res.valid);
+    console.log("Error valid",errorvalid);
+
     return (
+
         <div className="row">
             <div className="offset-md-3 col-md-6">
                 <h1 className="text-center">Реєстрація</h1>
+
                 <Formik
                     initialValues={initState}
-                    validationSchema={validationFields()}
+                    validationSchema={validate()}
                     onSubmit={onSubmitHandler}
                 >
                     <Form>
-                        <MyTextInput
-                            label="Електронна пошта"
+                        <TextInput
+                            label="Email"
                             name="email"
                             id="email"
-                            type="email" />
+                            type="text"
+                        />
+                         {!!errorvalid &&<span className="text-danger">{errorvalid}</span> }
 
-                        <MyTextInput
-                            label="Телефон"
-                            name="phone"
-                            id="phone"
-                            type="text" />
+                        <TextInput
+                            label="Name"
+                            name="name"
+                            id="name"
+                            type="text"
+                        />
 
-                        <MyTextInput
-                            label="Прізвище"
-                            name="secondName"
-                            id="secondName"
-                            type="text" />
+                        <TextInput
 
-                        <MyTextInput
-                            label="Ім'я"
-                            name="firstName" 
-                            id="firstName"
-                            type="text" />
-
-                        <MyTextInput
-                            label="Пароль"
+                            label="Password"
                             name="password"
                             id="password"
-                            type="password"/>
+                            type="password"
+                        />
 
-                        <MyTextInput
-                            label="Підтвердження пароль"
-                            name="confirmPassword"
-                            id="confirmPassword"
-                            type="password" />
-
+                        <TextInput
+                            label="Confirm password"
+                            name="confirmpassword"
+                            id="confirmpassword"
+                            type="password"
+                        />
                         <button type="submit" className="btn btn-primary">Реєстрація</button>
                     </Form>
                 </Formik>
             </div>
-
         </div>
+
     )
+
 }
 
-
-export default RegisterPage
+export default Register;

@@ -7,69 +7,56 @@ using System.Threading.Tasks;
 
 namespace AvtoPartMy.Models
 {
-    public class RegisterViewModels
-
+    public class RegistrateViewModels
     {
         public string Email { get; set; }
-        public string FirstName { get; set; }
-        public string SecondName { get; set; }
-        public string Phone { get; set; }
-        public string Password { get; set; }
-        public string ConfirmPassword { get; set; }
-    }
 
-    public class UserValidator : AbstractValidator<RegisterViewModels>
+    public string Name { get; set; }
+
+    public string Password { get; set; }
+
+    public string ConfirmPassword { get; set; }
+}
+
+public class UserValidator : AbstractValidator<RegistrateViewModels>
+{
+    private readonly AppEFContext _appEFContext;
+
+
+    public UserValidator(AppEFContext appEFContext)
     {
+        _appEFContext = appEFContext;
 
-        private readonly AppEFContext _appEFContext;
-        public UserValidator(AppEFContext appEFContext)
-        {
-            _appEFContext = appEFContext;
+        RuleFor(x => x.Email)
+            .NotEmpty().WithMessage(" Поле не може бути пустим!")
+            .EmailAddress().WithMessage(" Пароль має містити '@'")
+            .Must(BeValidEmail).WithName("Email").WithMessage("Такий користувач вже існує!");
 
-            RuleFor(x => x.Email)
-                .NotEmpty()
-                .WithMessage("Поле Email не може бути порожнім")
-                .MinimumLength(6)
-                .EmailAddress()
-                .WithMessage("Помилка заповнення поля Email")
-                .Must(IsValidEmail)
-                .WithName("Email")
-                .WithMessage("Такий користувач вже існує");
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage("Поле Password не може бути порожнім")
-                .MinimumLength(5)
-                .WithMessage("Пароль не може бути коротший, ніж 5 символів")
-                .Matches(@"\d")
-                .WithName("Password")
-                .WithMessage("Пароль повинен містити хоча б одну цифру");
-            RuleFor(x => x.Phone)
-                .NotEmpty()
-                .WithMessage("Поле Phone не може бути порожнім")
-                .MinimumLength(10)
-                .MaximumLength(11)
-                .WithMessage("Має бути не менше 10 і не більше 11 цифр");
-            RuleFor(x => x.ConfirmPassword)
-                .NotEmpty()
-                .WithMessage("Поле ConfirmPassword не може бути порожнім")
-                .Equal(x => x.Password)
-                .WithMessage("Введене підтвердження не співпадає з паролем");
-            RuleFor(x => x.FirstName)
-                .NotEmpty()
-                .WithMessage("Поле ім'я не може бути порожнім");
-            RuleFor(x => x.SecondName)
-                .NotEmpty()
-                .WithMessage("Поле прізвище не може бути порожнім");
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Поле не може бути пустим ");
 
-        }
-        private bool IsValidEmail(string email)
-        {
-            var user = _appEFContext.Users.FirstOrDefault(x => x.Email == email);
-            if (user == null)
-            {
-                return true;
-            }
-            return false;
-        }
+        RuleFor(x => x.Password)
+            .NotEmpty().WithMessage("Поле не може бути пустим  ")
+            .Length(3, 100).WithMessage(" Пароль не може бути менше 3 символів")
+            .Matches(@"\d").WithName("Password").WithMessage(" Пароль повинен містити хоча б одну цифру ");
+
+        RuleFor(x => x.ConfirmPassword)
+            .NotEmpty().WithMessage(" Поле не може бути пустим   ")
+            .Equal(x => x.Password).WithMessage(" Пароль і підтверджений пароль не співпадають");
+
+
+
     }
+
+    private bool BeValidEmail(string email)
+    {
+        //var user = _userManager.FindByEmailAsync(email).Result;
+        var user = _appEFContext.Users.FirstOrDefault(x => x.Email == email);
+        if (user == null)
+        {
+            return true;
+        }
+        return false;
+    }
+}
 }

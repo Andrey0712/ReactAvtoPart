@@ -1,14 +1,20 @@
 import * as Yup from 'yup';
 
-const validationFields= () => {
+const validate=()=>{
+
+
     return Yup.object({
         email: Yup.string()
-            .email('Не коректно вказана пошта')
-            .required("Вкажіть пошту"),
+            .email('Введіть валідні дані')
+            .required('Введіть пошту'),
         password: Yup.string()
-            .required('Вкажіть пароль.') 
-            .min(5, 'Пароль має містить мінімум 5 символів.')
-            .matches(/[a-zA-Z]/, 'Пароль має містить латинські символи.')
+            .required('Вкажіть пароль.')
+            .min(3, 'Пароль має містить мінімум 3 символів.')
+            .matches(/[0-9]/, 'Пароль має містить хоча б одну цифру.')
+
     });
+
+
 }
-export default validationFields;
+
+export default validate;

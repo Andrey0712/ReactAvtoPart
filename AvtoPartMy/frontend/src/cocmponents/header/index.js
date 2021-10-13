@@ -1,12 +1,25 @@
 
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import {logoutservice} from '../../services/logout.service';
+import {LOG_OUT} from '../../constants/actionTypes';
+import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 const Header = () => {
-    const {isAuth, username} = useSelector(redux => redux.auth);
+    const history = useHistory();
+    const dispatch = useDispatch();
 
-    console.log("Auth user info ", isAuth);
+   const logout=()=> {
+    logoutservice.logout();
+        dispatch({type: LOG_OUT});
+        history.push('/');
+    };
+        const {isAuth,username} = useSelector(res=>res.auth);
+       
+   
+console.log("Auth user info ", isAuth);
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container">
@@ -36,7 +49,8 @@ const Header = () => {
                                 <Link className="nav-link" to="/profile">{username}</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/logout">Вихід</Link>
+                                //<Link className="nav-link" to="/logout">Вихід</Link>
+                                <Link to="/" className="nav-link" onClick={logout}>Вихід</Link>
                             </li>
                         </ul>
                     }
@@ -47,7 +61,6 @@ const Header = () => {
         </nav>
     )
 }
-
 export default Header
 
 

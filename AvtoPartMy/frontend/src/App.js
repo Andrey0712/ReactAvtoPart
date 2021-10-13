@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import {
@@ -13,10 +13,8 @@ import LoginPage from './cocmponents/auth/Login';
 
 
 
-class App extends React.Component{
-  render() {
-    return (
-    <>
+ function App() {
+  return (
      <Router>
         <Header />
         <div className="container">
@@ -24,10 +22,6 @@ class App extends React.Component{
           <Route exact path="/">
               <HomePage />
             </Route>
-
-{/* <Route exact path="/">
-              <RegisterPage />
-            </Route> */}
 
             <Route exact path="/register">
               <RegisterPage />
@@ -40,9 +34,9 @@ class App extends React.Component{
           </Switch>
         </div>
       </Router>
-    </>
+  
   );
-  }
+  
 }
 
 

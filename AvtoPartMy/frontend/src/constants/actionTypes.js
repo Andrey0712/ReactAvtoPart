@@ -1,2 +1,4 @@
-export const LOGIN = 'LOGIN';
-export const REGISTER = 'REGISTER';
+export const REGISTER_AUTH = "REGISTER_AUTH";
+export const LOGIN_AUTH = "LOGIN_AUTH";
+export const LOG_OUT="LOG_OUT";
+export const ERRORS="ERRORS";

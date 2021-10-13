@@ -1,9 +1,11 @@
 using AvtoPartMy.Constans;
 using AvtoPartMy.Models;
+using AvtoPartMy.Services;
 using Data;
 using Data.Entities.Identity;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +15,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Linq;
+using System.Text;
 
 namespace AvtoPartMy
 {
@@ -43,21 +48,45 @@ namespace AvtoPartMy
                 .AddEntityFrameworkStores<AppEFContext>()
                 .AddDefaultTokenProviders();
 
-            
+            //Configuration from AppSettings
+            var appSettingSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingSection);
 
-            services.AddTransient<IValidator<RegisterViewModels>, UserValidator>();
+            //Adding Athentication - JWT
+            var appsettings = appSettingSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appsettings.Key);
+
+            services.AddAuthentication(auth =>
+            {
+                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(jwt => {
+                jwt.RequireHttpsMetadata = false;
+                jwt.SaveToken = false;
+                jwt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+
+            });
+
+            services.AddScoped<IJwtTokenService, JwtTokenServise>();
+
+
 
             services.AddControllersWithViews().AddFluentValidation();
 
-            //services.AddControllersWithViews();
+            services.AddTransient<IValidator<RegistrateViewModels>, UserValidator>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "frontend/build";
             });
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,7 +103,6 @@ namespace AvtoPartMy
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
             if (!roleManager.Roles.Any())
             {
                 var result = roleManager.CreateAsync(new AppRole
@@ -89,12 +117,13 @@ namespace AvtoPartMy
 
                 result = roleManager.CreateAsync(new AppRole
                 {
-                    Name = Roles.Manager
+                    Name = Roles.Operator
                 }).Result;
             }
 
-            app.UseRouting();
+            
 
+            app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
