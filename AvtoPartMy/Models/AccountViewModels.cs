@@ -1,5 +1,6 @@
 ﻿using Data;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,8 @@ namespace AvtoPartMy.Models
         public string Email { get; set; }
 
     public string Name { get; set; }
-
-    public string Password { get; set; }
+        public IFormFile Photo { get; set; }
+        public string Password { get; set; }
 
     public string ConfirmPassword { get; set; }
 }

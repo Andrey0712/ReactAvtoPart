@@ -198,50 +198,81 @@
 
 // export default withRouter(RegisterPage)
 
-import React from 'react'
-import { useHistory } from 'react-router-dom';
+import React, {useRef} from 'react'
+//import { useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik'
 import TextInput from '../../common/MyTextInput'
 import { useDispatch } from 'react-redux';
 import validate from './validation'
-import { REGISTER_AUTH,ERRORS } from '../../../constants/actionTypes';
+import { ERRORS } from '../../../constants/actionTypes';
 import { useSelector } from 'react-redux'
-import authTokenRequest from '../../../services/auth_request';
-import jwt from 'jsonwebtoken';
-import authServie from '../../../services/auth.servie';
+// import authTokenRequest from '../../../services/auth_request';
+// import jwt from 'jsonwebtoken';
+// import authServie from '../../../services/auth.servie';
+import MyPhotoInput from '../../common/MyPhotoInput';
+import { RegisterUser } from '../../../actions/RegisterUser';
+import EclipseWidget from '../../common/louding';
 
 const Register = () => {
 
     const initState = {
         email: '',
         name: '',
+        photo: null,
         password: '',
         confirmpassword: ''          
 
     }
 
-    const history = useHistory();
+    //const history = useHistory();
     const dispatch = useDispatch();
+    const { loading } = useSelector(state => state.auth);
+    const refFormik = useRef();
 
     const onSubmitHandler = async (values) => {
 
         try {
-            const result = await authServie.register(values);
+            // console.log("submit data ", values);
+
+            // console.log("Server submit file", JSON.stringify(
+            //     { 
+            //       fileName: values.photo.name, 
+            //       type: values.photo.type,
+            //       size: `${values.photo.size} bytes`
+            //     }
+            //   ));
+
+                    // const result = await authServie.register(values);
+                
+                    // console.log("Відправлені дані: ", values);
+                    // console.log("Result data:",result.data.token);
+
+                    // var jwt_token=result.data.token;
+
+                    // var verified = jwt.decode(jwt_token);            
+                    // console.log("Verified.roles:",verified.roles);
+                    // dispatch({type: REGISTER_AUTH, payload: verified});
+
+            // var formData = new FormData();
+            // formData.append("email", values.email);
+            // formData.append("password", values.password);
+            // formData.append("photo", values.photo);
+
+            // const result = await authService.register(formData);
+            // console.log("Server is good ", result);
+            // dispatch({type: REGISTER, payload: values.email});
+            // history.push("/");
+            
+            const formData = new FormData();
+            Object.entries(values).forEach(([key, value]) => formData.append(key, value));
+            dispatch(RegisterUser(formData));
+            //const result =  await dispatch(RegisterUser(formData));
+            //history.push("/");
            
-            console.log("Відправлені дані: ", values);
-            console.log("Result data:",result.data.token);
-
-            var jwt_token=result.data.token;
-
-            var verified = jwt.decode(jwt_token);            
-            console.log("Verified.roles:",verified.roles);
-            dispatch({type: REGISTER_AUTH, payload: verified});
-
-           
-            localStorage.setItem('Current user',jwt_token);
-            console.log("Local:",localStorage);
-            authTokenRequest(jwt_token);
-            history.push("/");
+            // localStorage.setItem('Current user',jwt_token);
+            // console.log("Local:",localStorage);
+            // authTokenRequest(jwt_token);
+            // history.push("/");
         }
         catch (problem) {
             //обробка помилок валідації на стороні сервера.
@@ -276,6 +307,7 @@ const Register = () => {
                 <h1 className="text-center">Реєстрація</h1>
 
                 <Formik
+                    innerRef = {refFormik}
                     initialValues={initState}
                     validationSchema={validate()}
                     onSubmit={onSubmitHandler}
@@ -295,6 +327,9 @@ const Register = () => {
                             id="name"
                             type="text"
                         />
+                        <MyPhotoInput
+                        refFormik={refFormik}
+                        field="Photo"/>
 
                         <TextInput
 
@@ -314,6 +349,8 @@ const Register = () => {
                     </Form>
                 </Formik>
             </div>
+
+            {loading && <EclipseWidget />}
         </div>
 
     )

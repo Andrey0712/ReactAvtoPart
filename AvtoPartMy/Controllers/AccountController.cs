@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,17 +39,38 @@ namespace AvtoPartMy.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegistrateViewModels model)
+        public async Task<IActionResult> Register([FromForm] RegistrateViewModels model)
         {
-            ///Зберігаємо фото
-            try
+            
+                //строчка для файлу фото профіля.            
+                string fileNameUser = string.Empty;
+
+                //якщо фото обрано:
+                if (model.Photo != null)
+                {
+                    //розширення
+                    var ext = Path.GetExtension(model.Photo.FileName);
+                    //імя файла з розширенням.
+                    fileNameUser = Path.GetRandomFileName() + ext;
+                    //директорія,де знаходитиметься файл.
+                    var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
+                    //повний шлях до фото.
+                    var filePath = Path.Combine(dir, fileNameUser);
+
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        await model.Photo.CopyToAsync(stream);
+                    }
+                }
+                ///Зберігаємо фото
+                try
             {
 
                 var user = new AppUser
                 {
                     Email = model.Email,
-                    UserName = model.Name
-
+                    UserName = model.Name,
+                    FotoUser= fileNameUser
                 };
 
                 var role = new AppRole

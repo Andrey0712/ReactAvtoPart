@@ -14,9 +14,11 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -121,7 +123,17 @@ namespace AvtoPartMy
                 }).Result;
             }
 
-            
+            var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(dir),
+                RequestPath = "/images"
+            });
 
             app.UseRouting();
             app.UseEndpoints(endpoints =>

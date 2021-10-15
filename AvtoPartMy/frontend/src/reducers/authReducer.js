@@ -1,10 +1,11 @@
-import { REGISTER_AUTH,LOGIN_AUTH,LOG_OUT } from "../constants/actionTypes";
+import { REGISTER_AUTH,LOGIN_AUTH,LOG_OUT,REGISTER_BEGIN } from "../constants/actionTypes";
 
 
 const initialState ={
     isAuth: false,
     username: "",
-    role:""
+    role:"",
+    Loading:false
 }
 
 
@@ -13,19 +14,14 @@ function authReducer(state = initialState, action) {
     console.log("reducer data", payload);
 
     switch(type){
-        case REGISTER_AUTH: {
+        case REGISTER_AUTH:
+           case LOGIN_AUTH:  
+         {
             return {
                 isAuth: true,
                 username: payload.name,
-                role:payload.roles
-            }
-            
-        }
-        case LOGIN_AUTH: {
-            return {
-                isAuth: true,
-                username: payload.name,
-                role:payload.roles
+                role:payload.roles,
+                load:false
             }
         }
         case LOG_OUT: {
@@ -33,6 +29,13 @@ function authReducer(state = initialState, action) {
                 isAuth: false,
                 username: "",
                 role:""
+            }
+        }
+        case REGISTER_BEGIN:{
+            return{
+                ...state,
+                Loading:true
+
             }
         }
 
