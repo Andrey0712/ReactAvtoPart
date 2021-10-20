@@ -15,6 +15,14 @@ function authReducer(state = initialState, action) {
 
     switch(type){
         case REGISTER_AUTH:
+            {
+                return {
+                    isAuth: true,
+                    username: payload.name,
+                    role:payload.roles,
+                    load:false
+                }
+            }
            case LOGIN_AUTH:  
          {
             return {

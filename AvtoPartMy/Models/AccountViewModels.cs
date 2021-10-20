@@ -38,7 +38,7 @@ public class UserValidator : AbstractValidator<RegistrateViewModels>
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Поле не може бути пустим  ")
-            .Length(3, 100).WithMessage(" Пароль не може бути менше 3 символів")
+            .Length(5, 100).WithMessage(" Пароль не може бути менше 5 символів")
             .Matches(@"\d").WithName("Password").WithMessage(" Пароль повинен містити хоча б одну цифру ");
 
         RuleFor(x => x.ConfirmPassword)

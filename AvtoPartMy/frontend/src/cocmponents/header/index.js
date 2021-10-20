@@ -16,6 +16,8 @@ const Header = () => {
         dispatch({type: LOG_OUT});
         history.push('/');
     };
+
+    
         const {isAuth,username} = useSelector(res=>res.auth);
        
    
@@ -32,6 +34,16 @@ console.log("Auth user info ", isAuth);
                         <li className="nav-item">
                             <Link className="nav-link active" aria-current="page" to="/">Головна</Link>
                         </li>
+                        {!isAuth ?
+                        <li className="nav-item">
+                        <Link className="nav-link" to="/register">Список юзеров доступен только после регистрации</Link>
+                    </li>
+                    :
+                    <li className="nav-item">
+                            <Link className="nav-link" to="/getusers">Список юзеров </Link>
+                        </li>
+                        }
+
                     </ul>
 
                     {!isAuth ?
@@ -40,8 +52,9 @@ console.log("Auth user info ", isAuth);
                                 <Link className="nav-link" to="/login">Вхід</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/register">Реєструватися</Link>
+                                <Link className="nav-link"  to="/register">Реєструватися</Link>
                             </li>
+                           
                         </ul>
                         :
                         <ul className="navbar-nav">
@@ -49,9 +62,9 @@ console.log("Auth user info ", isAuth);
                                 <Link className="nav-link" to="/profile">{username}</Link>
                             </li>
                             <li className="nav-item">
-                                //<Link className="nav-link" to="/logout">Вихід</Link>
                                 <Link to="/" className="nav-link" onClick={logout}>Вихід</Link>
                             </li>
+                            
                         </ul>
                     }
                     

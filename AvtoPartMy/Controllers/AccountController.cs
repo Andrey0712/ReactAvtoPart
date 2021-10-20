@@ -1,11 +1,14 @@
-﻿using AvtoPartMy.Constans;
+﻿using AutoMapper;
+using AvtoPartMy.Constans;
 using AvtoPartMy.Models;
 using AvtoPartMy.Services;
 using Data;
 using Data.Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,19 +25,26 @@ namespace AvtoPartMy.Controllers
         private readonly IJwtTokenService _tokenService;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<AppRole> _roleManager;
-       
+        private readonly IMapper _mapper;
+        private readonly AppEFContext _context;
 
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
-                                RoleManager<AppRole> roleManager, IJwtTokenService jwtTokenService)
+                                RoleManager<AppRole> roleManager, 
+                                IJwtTokenService jwtTokenService,
+                                IMapper mapper,
+                                AppEFContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _tokenService = jwtTokenService;
+            _context = context;
+            _mapper = mapper;
+
         }
 
-        
+
 
 
         [HttpPost]
@@ -42,27 +52,23 @@ namespace AvtoPartMy.Controllers
         public async Task<IActionResult> Register([FromForm] RegistrateViewModels model)
         {
             
-                //строчка для файлу фото профіля.            
-                string fileNameUser = string.Empty;
+                           
+                string foto = string.Empty;
 
-                //якщо фото обрано:
+               
                 if (model.Photo != null)
-                {
-                    //розширення
+                {                    
                     var ext = Path.GetExtension(model.Photo.FileName);
-                    //імя файла з розширенням.
-                    fileNameUser = Path.GetRandomFileName() + ext;
-                    //директорія,де знаходитиметься файл.
+                    foto = Path.GetRandomFileName() + ext;
                     var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
-                    //повний шлях до фото.
-                    var filePath = Path.Combine(dir, fileNameUser);
+                    var fotoPath = Path.Combine(dir, foto);
 
-                    using (var stream = System.IO.File.Create(filePath))
+                    using (var stream = System.IO.File.Create(fotoPath))
                     {
                         await model.Photo.CopyToAsync(stream);
                     }
                 }
-                ///Зберігаємо фото
+                
                 try
             {
 
@@ -70,7 +76,7 @@ namespace AvtoPartMy.Controllers
                 {
                     Email = model.Email,
                     UserName = model.Name,
-                    FotoUser= fileNameUser
+                    FotoUser= foto
                 };
 
                 var role = new AppRole
@@ -103,14 +109,15 @@ namespace AvtoPartMy.Controllers
 
         public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
-            var result = await _signInManager
-                .PasswordSignInAsync(model.Email, model.Password, false, false);
-
+            //var result = await _signInManager
+            //    .PasswordSignInAsync(model.Email, model.Password, false, false);
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
             if (!result.Succeeded)
             {
                 return BadRequest(new { message = "Incorrect data!" });
             }
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            
 
             return Ok(new
             {
@@ -118,107 +125,26 @@ namespace AvtoPartMy.Controllers
             });
         }
 
+        [HttpGet]
         //[HttpPost]
-        //[Route("register")]
-        //public async Task<IActionResult> Register([FromBody] RegisterViewModels model)
-        //{
-        //    return await Task.Run(() =>
-        //    {
-        //        IActionResult res;
+        [Route("getusers")]
+        [Authorize(Roles = Roles.User)]
 
-        //            var user = new AppUser
-        //            {
-        //                Email = model.Email,
-        //                UserName = model.FirstName
+        public async Task<IActionResult> GetUsersList()
+        {
+            //return await Task.Run(() => {
+            //    return Ok(_userManager.Users
+            //        .Select(x => x).ToList());
+            //});
 
-        //            };
+            var userlist = await _context.Users
+                .Select(res => _mapper.Map<UserViewModel>(res))
+                .ToListAsync();
 
-        //            var createResult = _userManager.CreateAsync(user, model.Password).Result;
-        //            if (createResult.Succeeded)
-        //            {
-        //                res = Ok(new
-        //                {
-        //                    message = "Успіно зареєстровано!",
-        //                    token = _jwtTokenService.CreateToken(user)
-        //                });
-        //                _signInManager.PasswordSignInAsync(user, model.Password, false, false).Wait();
-        //            }
-        //            else
-        //            {
-        //                res = BadRequest(new
-        //                {
-        //                    error = createResult.Errors
-        //                });
-        //            }
+            return Ok(userlist);
+        }
 
 
-        //        //else
-        //        //{
-        //        //    var result = new UserValidator().ValidateAsync(model).Result;
-        //        //    res = BadRequest(new
-        //        //    {
-        //        //        error = result.Errors
-        //        //    });
-        //        //}
-        //        return res;
-        //    });
-        //}
-
-        //[HttpPost]
-        //[Route("logout")]
-        //public async Task<IActionResult> Logout([FromBody] string email)
-        //{
-        //    return await Task.Run(() => {
-        //        var userClaim = _signInManager.IsSignedIn(_signInManager.CreateUserPrincipalAsync(
-        //            _userManager.FindByEmailAsync(email).Result).Result);
-        //        if (userClaim)
-        //        {
-        //            _signInManager.SignOutAsync().Wait();
-        //        }
-        //        return Ok();
-        //    });
-        //}
-
-        //[HttpPost]
-        //[Route("login")]
-        //public async Task<IActionResult> Login([FromBody] LoginModel model)
-        //{
-        //    return await Task.Run(async () => {
-        //        IActionResult res;
-        //        if (ModelState.IsValid)
-        //        {
-        //            var user = await _userManager.FindByEmailAsync(model.Email);
-        //            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
-        //            {
-        //                res = Ok(new
-        //                {
-        //                    message = "Вхід схвалено!",
-        //                    token = _jwtTokenService.CreateToken(user),
-        //                    UserName = user.NormalizedUserName,
-        //                    email = user.Email,
-
-        //                });
-        //                _signInManager.PasswordSignInAsync(user, model.Password, false, false).Wait();
-        //            }
-        //            else
-        //            {
-        //                res = BadRequest(new
-        //                {
-        //                    message = "Не правильний логін або пароль!"
-        //                });
-        //            }
-        //        }
-        //        else
-        //        {
-        //            var result = new MyValidatiorLogin().ValidateAsync(model).Result;
-        //            res = BadRequest(new
-        //            {
-        //                error = result.Errors
-        //            });
-        //        }
-        //        return res;
-        //    });
-        //}
 
 
     }

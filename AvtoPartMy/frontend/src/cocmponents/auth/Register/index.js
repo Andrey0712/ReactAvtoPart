@@ -199,16 +199,12 @@
 // export default withRouter(RegisterPage)
 
 import React, {useRef} from 'react'
-//import { useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik'
 import TextInput from '../../common/MyTextInput'
 import { useDispatch } from 'react-redux';
 import validate from './validation'
 import { ERRORS } from '../../../constants/actionTypes';
 import { useSelector } from 'react-redux'
-// import authTokenRequest from '../../../services/auth_request';
-// import jwt from 'jsonwebtoken';
-// import authServie from '../../../services/auth.servie';
 import MyPhotoInput from '../../common/MyPhotoInput';
 import { RegisterUser } from '../../../actions/RegisterUser';
 import EclipseWidget from '../../common/louding';

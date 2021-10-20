@@ -1,21 +1,22 @@
-//import logo from './logo.svg';
+
 import './App.css';
 import React from 'react';
 import {
-  BrowserRouter as Router,
+ 
   Switch,
   Route
 } from "react-router-dom";
 import  Header  from './cocmponents/header';
 import RegisterPage from './cocmponents/auth/Register';
 import LoginPage from './cocmponents/auth/Login';
+import UsersPage from './cocmponents/userlist';
  import HomePage from './cocmponents/home';
 
 
 
  function App() {
   return (
-     <Router>
+    <>
         <Header />
         <div className="container">
           <Switch>
@@ -31,9 +32,13 @@ import LoginPage from './cocmponents/auth/Login';
               <LoginPage />
             </Route>
 
+            <Route exact path="/getusers">
+              <UsersPage />
+              </Route> 
+
           </Switch>
         </div>
-      </Router>
+      </>
   
   );
   

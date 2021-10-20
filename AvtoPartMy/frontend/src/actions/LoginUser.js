@@ -1,13 +1,13 @@
 
 import jwt from 'jsonwebtoken';
-import { REGISTER_AUTH, REGISTER_BEGIN } from '../constants/actionTypes';
+import { LOGIN_AUTH, REGISTER_BEGIN } from '../constants/actionTypes';
 import authServie from '../services/auth.servie';
 import authTokenRequest from '../services/auth_request';
 import {push} from 'connected-react-router';
 
 
 
-export const RegisterUser=(model)=>async(dispatch)=>{
+export const LoginUser=(model)=>async(dispatch)=>{
 
     try {
 
@@ -19,12 +19,12 @@ export const RegisterUser=(model)=>async(dispatch)=>{
          //return Promise.resolve(result);
 
         
-        const result = await authServie.register(model);  
+        const result = await authServie.login(model);  
         //console.log("Result:",result.data);
         //console.log("Result data token:",result.data.token);
         var jwt_token=result.data.token;
         var verified = jwt.decode(jwt_token); 
-        dispatch({type: REGISTER_AUTH, payload: verified});
+        dispatch({type: LOGIN_AUTH, payload: verified});
         localStorage.setItem('Current user',jwt_token);
         authTokenRequest(jwt_token);   
         dispatch({type:REGISTER_BEGIN});
@@ -32,7 +32,7 @@ export const RegisterUser=(model)=>async(dispatch)=>{
                 
     }
     catch(error) {
-        console.log("Problem register",error);
+        console.log("Problem login",error);
 
         //return Promise.reject(err);
     }

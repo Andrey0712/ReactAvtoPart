@@ -84,6 +84,8 @@ namespace AvtoPartMy
 
             services.AddTransient<IValidator<RegistrateViewModels>, UserValidator>();
 
+            services.AddAutoMapper(typeof(UserView));
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

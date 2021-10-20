@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-const validate=()=>{
+const validateLog=()=>{
 
 
     return Yup.object({
@@ -17,4 +17,4 @@ const validate=()=>{
 
 }
 
-export default validate;
+export default validateLog;
