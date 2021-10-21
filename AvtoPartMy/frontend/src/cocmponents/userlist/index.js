@@ -2,35 +2,36 @@ import {useEffect} from "react";
 import {useDispatch} from "react-redux";
 import {useSelector} from "react-redux";
 import http from "../../http_common";
-import { GetUser } from '../../actions/users';
+import { getUsers } from '../../actions/users';
 
 const UsersPage = () => {
     const dispatch = useDispatch();
-    const {users}=useSelector(state=>state.user);
+    //const list = useSelector(state => state.users.list);
+    const { list } = useSelector(state => state.user);
 
     useEffect(()=>
     {
-        dispatch(GetUser());
-        console.log("UseEffect done:");
+        dispatch(getUsers());
+        console.log("Request to server");
     },[]);
+    console.log("Render component users")
     return(
-        <div>            
+        <div>        
+            <h1>Список користувачів</h1>    
             <table className="table">
-                <thead className="table table-bordered">
+                <thead className="thead-dark">
                     <tr>
-                        <th scope="col">Image</th>
-                        <th scope="col">Name</th>
+                        <th scope="col">Фото</th>
+                        <th scope="col">Имя</th>
                         <th scope="col">E-mail</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {users && users.map((item) =>
-                            <tr key={item.email}>
+                {list &&
+                        list.map((item, index) =>
+                            <tr key={index}>
                                 <td>
-                                    <img src={http.defaults.baseURL + item.photo}
-                                        alt="user photo"
-                                        width="100"
-                                    />
+                                    <img src={http.defaults.baseURL+item.image} alt="my image" width="100"/>
                                 </td>
                                 <td>{item.user}</td>
                                 <td>{item.email}</td>

@@ -125,24 +125,24 @@ namespace AvtoPartMy.Controllers
             });
         }
 
-        [HttpGet]
-        //[HttpPost]
-        [Route("getusers")]
-        [Authorize(Roles = Roles.User)]
+        //[HttpGet]
+        ////[HttpPost]
+        //[Route("getusers")]
+        //[Authorize(Roles = Roles.User)]
 
-        public async Task<IActionResult> GetUsersList()
-        {
-            //return await Task.Run(() => {
-            //    return Ok(_userManager.Users
-            //        .Select(x => x).ToList());
-            //});
+        //public async Task<IActionResult> GetUsersList()
+        //{
+        //    //return await Task.Run(() => {
+        //    //    return Ok(_userManager.Users
+        //    //        .Select(x => x).ToList());
+        //    //});
 
-            var userlist = await _context.Users
-                .Select(res => _mapper.Map<UserViewModel>(res))
-                .ToListAsync();
+        //    var userlist = await _context.Users
+        //        .Select(res => _mapper.Map<UserViewModel>(res))
+        //        .ToListAsync();
 
-            return Ok(userlist);
-        }
+        //    return Ok(userlist);
+        //}
 
 
 

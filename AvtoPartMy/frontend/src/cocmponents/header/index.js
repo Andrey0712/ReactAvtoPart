@@ -40,7 +40,7 @@ console.log("Auth user info ", isAuth);
                     </li>
                     :
                     <li className="nav-item">
-                            <Link className="nav-link" to="/getusers">Список юзеров </Link>
+                            <Link className="nav-link" to="/users">Список юзеров </Link>
                         </li>
                         }
 

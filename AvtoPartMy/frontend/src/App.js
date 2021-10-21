@@ -32,7 +32,7 @@ import UsersPage from './cocmponents/userlist';
               <LoginPage />
             </Route>
 
-            <Route exact path="/getusers">
+            <Route exact path="/users">
               <UsersPage />
               </Route> 
 

@@ -1,14 +1,14 @@
 import {USERS} from "../constants/actionTypes";
-import getuser from '../services/auth.servie';
+import usersService from "../services/user.service";
 
-export const GetUser = () => async(dispatch) => {
-
+export const getUsers = () => async (dispatch) => {
     try {
-        const result = await getuser.getdata(); 
-        console.log("Отиманий user:", result);        
-        dispatch({type: USERS, payload: result.data});    
-    }
-    catch(error) {
-        console.log("Неможливо отримати користувачів",error);
+        const res = await usersService.get_list();
+        dispatch({
+            type: USERS,
+            data: res.data
+        });
+    } catch(err) {
+        console.log(err);
     }
 }
