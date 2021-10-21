@@ -16,9 +16,11 @@ const UsersPage = () => {
     },[]);
     console.log("Render component users")
     return(
-        <div>        
-            <h1>Список користувачів</h1>    
-            <table className="table">
+              
+            
+            <div className="offset-2 col-md-8">
+                <h1>Список користувачів</h1>    
+            <table className="table table-striped ">
                 <thead className="thead-dark">
                     <tr>
                         <th scope="col">Фото</th>
@@ -31,9 +33,10 @@ const UsersPage = () => {
                         list.map((item, index) =>
                             <tr key={index}>
                                 <td>
-                                    <img src={http.defaults.baseURL+item.image} alt="my image" width="100"/>
+                                {/* <img width="60" height="60" src={'/images/' + item.image} alt="no image"/> */}
+                                    <img src={http.defaults.baseURL+item.photo} alt="no image" width="60" height="60"/>
                                 </td>
-                                <td>{item.user}</td>
+                                <td>{item.name}</td>
                                 <td>{item.email}</td>
                             </tr>)}
                 </tbody>
