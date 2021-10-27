@@ -39,8 +39,8 @@ const onSubmitHandler = async (values) => {
 }
 
 
-const {errorvalid} = useSelector(res=>res.valid);
-console.log("Error valid",errorvalid);
+// const {errorvalid} = useSelector(res=>res.valid);
+// console.log("Error valid",errorvalid);
 
 return (
 

@@ -1,3 +1,4 @@
+using AvtoPartMy.Abastract;
 using AvtoPartMy.Constans;
 using AvtoPartMy.Models;
 using AvtoPartMy.Services;
@@ -17,7 +18,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -77,7 +80,7 @@ namespace AvtoPartMy
             });
 
             services.AddScoped<IJwtTokenService, JwtTokenServise>();
-
+            services.AddScoped<IUserService, UserService>();
 
 
             services.AddControllersWithViews().AddFluentValidation();
@@ -86,12 +89,40 @@ namespace AvtoPartMy
 
             services.AddAutoMapper(typeof(UserView));
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "AutoPart", Version = "v1" });
+                c.AddSecurityDefinition("Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Description = "JWT Authorization header using the Bearer scheme.",
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer"
+                    });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement{
+                    {
+                        new OpenApiSecurityScheme{
+                            Reference = new OpenApiReference{
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },new List<string>()
+                    }
+                });
+            });
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "frontend/build";
             });
+
+            services.AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<Startup>());
+
         }
+
+        
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<AppRole> roleManager)
@@ -99,6 +130,8 @@ namespace AvtoPartMy
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AutoPart v1"));
             }
             else
             {
@@ -107,23 +140,23 @@ namespace AvtoPartMy
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-            if (!roleManager.Roles.Any())
-            {
-                var result = roleManager.CreateAsync(new AppRole
-                {
-                    Name = Roles.Admin
-                }).Result;
+            //if (!roleManager.Roles.Any())
+            //{
+            //    var result = roleManager.CreateAsync(new AppRole
+            //    {
+            //        Name = Roles.Admin
+            //    }).Result;
 
-                result = roleManager.CreateAsync(new AppRole
-                {
-                    Name = Roles.User
-                }).Result;
+            //    result = roleManager.CreateAsync(new AppRole
+            //    {
+            //        Name = Roles.User
+            //    }).Result;
 
-                result = roleManager.CreateAsync(new AppRole
-                {
-                    Name = Roles.Operator
-                }).Result;
-            }
+            //    result = roleManager.CreateAsync(new AppRole
+            //    {
+            //        Name = Roles.Operator
+            //    }).Result;
+            //}
 
             var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
             if (!Directory.Exists(dir))
@@ -157,6 +190,7 @@ namespace AvtoPartMy
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+            app.SeedData();
         }
     }
 }

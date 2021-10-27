@@ -34,7 +34,7 @@ const UsersPage = () => {
                             <tr key={index}>
                                 <td>
                                 {/* <img width="60" height="60" src={'/images/' + item.image} alt="no image"/> */}
-                                    <img src={http.defaults.baseURL+item.photo} alt="no image" width="60" height="60"/>
+                                    <img src={http.defaults.baseURL+item.photo} alt="no foto" width="60" height="60"/>
                                 </td>
                                 <td>{item.name}</td>
                                 <td>{item.email}</td>

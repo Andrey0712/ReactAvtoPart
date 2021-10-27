@@ -1,6 +1,6 @@
 
 import jwt from 'jsonwebtoken';
-import { REGISTER_AUTH, REGISTER_BEGIN } from '../constants/actionTypes';
+import { REGISTER_AUTH, REGISTER_BEGIN, REGISTER_FAILED } from '../constants/actionTypes';
 import authServie from '../services/auth.servie';
 import authTokenRequest from '../services/auth_request';
 import {push} from 'connected-react-router';
@@ -11,30 +11,22 @@ export const RegisterUser=(model)=>async(dispatch)=>{
 
     try {
 
-        // dispatch({type: REGISTER_BEGIN});
-        // const result = await authServie.register(model);
-        // dispatch({type: REGISTER_AUTH, payload: model.email});
-        // dispatch(push("/"));
-
-         //return Promise.resolve(result);
-
-        
-        const result = await authServie.register(model);  
-        //console.log("Result:",result.data);
-        //console.log("Result data token:",result.data.token);
-        var jwt_token=result.data.token;
-        var verified = jwt.decode(jwt_token); 
-        dispatch({type: REGISTER_AUTH, payload: verified});
-        localStorage.setItem('Current user',jwt_token);
-        authTokenRequest(jwt_token);   
-        dispatch({type:REGISTER_BEGIN});
-        dispatch(push("/"));
-                
+        dispatch({type: REGISTER_BEGIN});
+        const result = await authServie.register(model);
+        //const token = result.data.token;
+        console.log("register reuslt", result);
+        dispatch({type: REGISTER_AUTH,payload:model.email});
+        // localStorage.authToken = token;
+        // dispatch(authUser(token));
+        return Promise.resolve(result);
     }
-    catch(error) {
-        console.log("Problem register",error);
+    catch(err) {
+        const{data}=err.response;
+        //console.log("Register error", err.response.data);
+        dispatch({type:REGISTER_FAILED,payload:data.errors});
+        //console.log("Problem register");
 
-        //return Promise.reject(err);
+        return Promise.reject(data);
     }
 
 }

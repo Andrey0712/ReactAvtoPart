@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using AvtoPartMy.Abastract;
 using AvtoPartMy.Constans;
+using AvtoPartMy.Exceptions;
 using AvtoPartMy.Models;
 using AvtoPartMy.Services;
 using Data;
@@ -24,85 +26,119 @@ namespace AvtoPartMy.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IJwtTokenService _tokenService;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly RoleManager<AppRole> _roleManager;
-        private readonly IMapper _mapper;
-        private readonly AppEFContext _context;
+          private readonly IUserService _userService;
 
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
-                                RoleManager<AppRole> roleManager, 
-                                IJwtTokenService jwtTokenService,
-                                IMapper mapper,
-                                AppEFContext context)
+                                  IJwtTokenService jwtTokenService,
+                                         IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
             _tokenService = jwtTokenService;
-            _context = context;
-            _mapper = mapper;
-
+            _userService = userService;
         }
-
-
-
 
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromForm] RegistrateViewModels model)
         {
-            
-                           
-                string foto = string.Empty;
-
-               
-                if (model.Photo != null)
-                {                    
-                    var ext = Path.GetExtension(model.Photo.FileName);
-                    foto = Path.GetRandomFileName() + ext;
-                    var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
-                    var fotoPath = Path.Combine(dir, foto);
-
-                    using (var stream = System.IO.File.Create(fotoPath))
-                    {
-                        await model.Photo.CopyToAsync(stream);
-                    }
-                }
-                
-                try
+            try
             {
-
-                var user = new AppUser
-                {
-                    Email = model.Email,
-                    UserName = model.Name,
-                    FotoUser= foto
-                };
-
-                var role = new AppRole
-                {
-                    Name = Roles.User
-                };
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (!result.Succeeded)
-                    return BadRequest(new { message = result.Errors });
-
-                await _userManager.AddToRoleAsync(user, role.Name);
-
-                await _signInManager.SignInAsync(user, isPersistent: false);
-
-                return Ok(new
-                {
-                    token = _tokenService.Authentificate(user)
-                });
+                string token = await _userService.CreateUser(model);
+                return Ok(
+                    new { token }
+                    );
+            }
+            catch (AccountException aex)
+            {
+                return BadRequest(aex.AccountError);
             }
             catch
             {
-                return BadRequest(new { message = "Щось пішло не так - помилка з БД" });
-
+                return BadRequest(new AccountError("Щось пішло не так!"));
             }
         }
+
+
+        //[HttpPost]
+        //[Route("register")]
+        //public async Task<IActionResult> Register([FromForm] RegistrateViewModels model)
+        //{
+
+
+        //        string foto = string.Empty;
+        //    string fileName = String.Empty;
+
+        //    if (model.Photo != null)
+        //        {                    
+        //            var ext = Path.GetExtension(model.Photo.FileName);
+        //            foto = Path.GetRandomFileName() + ext;
+        //            var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
+        //            fileName = Path.Combine(dir, foto);
+
+        //            using (var stream = System.IO.File.Create(fileName))
+        //            {
+        //                await model.Photo.CopyToAsync(stream);
+        //            }
+        //        }
+
+        //        try
+        //    {
+
+        //        var user = new AppUser
+        //        {
+        //            Email = model.Email,
+        //            UserName = model.Name,
+        //            FotoUser= foto
+        //        };
+
+        //        // var role = new AppRole
+        //        // {
+        //        //     Name = Roles.User
+        //        // };
+        //        var result = await _userManager.CreateAsync(user, model.Password);
+
+        //        if (!result.Succeeded)
+        //        {
+        //            if (!string.IsNullOrEmpty(fileName))
+        //                System.IO.File.Delete(fileName);
+        //            AccountError accountError = new AccountError();
+        //            foreach (var item in result.Errors)
+        //            {
+        //                accountError.Errors.Invalid.Add(item.Description);
+        //            }
+        //            return BadRequest(accountError);
+        //        }
+        //        // //return BadRequest(new { message = result.Errors });
+
+        //        await _userManager.AddToRoleAsync(user, Roles.User);
+        //        if (!result.Succeeded)
+        //        {
+        //            if (!string.IsNullOrEmpty(fileName))
+        //                System.IO.File.Delete(fileName);
+        //            result = await _userManager.DeleteAsync(user);
+        //            AccountError accountError = new AccountError();
+        //            foreach (var item in result.Errors)
+        //            {
+        //                accountError.Errors.Invalid.Add(item.Description);
+        //            }
+        //            return BadRequest(accountError);
+        //        }
+
+        //        // await _signInManager.SignInAsync(user, isPersistent: false);
+
+        //        return Ok(new
+        //        {
+        //            token = _tokenService.Authentificate(user)
+        //        });
+        //    }
+        //    catch
+        //    {
+        //        return BadRequest(new { message = "Щось пішло не так - помилка з БД" });
+
+        //    }
+        //}
 
         [HttpPost]
         [Route("login")]
@@ -125,27 +161,6 @@ namespace AvtoPartMy.Controllers
             });
         }
 
-        //[HttpGet]
-        ////[HttpPost]
-        //[Route("getusers")]
-        //[Authorize(Roles = Roles.User)]
-
-        //public async Task<IActionResult> GetUsersList()
-        //{
-        //    //return await Task.Run(() => {
-        //    //    return Ok(_userManager.Users
-        //    //        .Select(x => x).ToList());
-        //    //});
-
-        //    var userlist = await _context.Users
-        //        .Select(res => _mapper.Map<UserViewModel>(res))
-        //        .ToListAsync();
-
-        //    return Ok(userlist);
-        //}
-
-
-
-
+        
     }
 }
