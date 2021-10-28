@@ -6,6 +6,8 @@ import {logoutservice} from '../../services/logout.service';
 import {LOG_OUT} from '../../constants/actionTypes';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { logoutUser } from '../../actions/RegisterUser';
+import { push } from 'connected-react-router';
 
 const Header = () => {
     const history = useHistory();
@@ -16,7 +18,13 @@ const Header = () => {
         dispatch({type: LOG_OUT});
         history.push('/');
     };
+//или так
 
+const onClickLogout = (e) => {
+    e.preventDefault();
+    dispatch(logoutUser());
+    dispatch(push("/"));
+}
     
         const {isAuth,username} = useSelector(res=>res.auth);
        
@@ -62,7 +70,8 @@ console.log("Auth user info ", isAuth);
                                 <Link className="nav-link" to="/profile">{username}</Link>
                             </li>
                             <li className="nav-item">
-                                <Link to="/" className="nav-link" onClick={logout}>Вихід</Link>
+                                {/* <Link to="/" className="nav-link" onClick={logout}>Вихід</Link> */}
+                                <Link to="/" className="nav-link" onClick={onClickLogout}>Вихід</Link>
                             </li>
                             
                         </ul>

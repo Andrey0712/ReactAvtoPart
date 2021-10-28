@@ -4,7 +4,7 @@ import { REGISTER_AUTH,LOGIN_AUTH,LOG_OUT,REGISTER_BEGIN, REGISTER_FAILED } from
 const initialState ={
     isAuth: false,
     username: "",
-    role:"",
+    //role:"",
     loading:false
     
 }
@@ -18,9 +18,8 @@ function authReducer(state = initialState, action) {
         case REGISTER_AUTH:
             {
                 return {
-                    isAuth: true,
-                    username: payload.name,
-                    role:payload.roles,
+                    isAuth: false,
+                    //role:payload.roles,
                     loading:false
                 }
             }
@@ -29,15 +28,15 @@ function authReducer(state = initialState, action) {
             return {
                 isAuth: true,
                 username: payload.name,
-                role:payload.roles,
+                //role:payload.roles,
                 loading:false
             }
         }
         case LOG_OUT: {
             return {
-                isAuth: false,
-                username: "",
-                role:""
+                isAuth: false
+                //username: "",
+                //role:""
             }
         }
         case REGISTER_BEGIN:{
