@@ -28,7 +28,7 @@ namespace AvtoPartMy.Models
         {
             CreateMap<RegistrateViewModels, AppUser>()
                 .ForMember(x => x.FotoUser, opt => opt.Ignore())
-                .ForMember(x => x.UserName, opt => opt.MapFrom(x => x.Email));
+                .ForMember(x => x.UserName, opt => opt.MapFrom(x => x.Name));
             //.ForMember(x => x.Image, opt => opt.MapFrom(x => "images/"
             //    + (string.IsNullOrEmpty(x.Photo) ? "noimage.jpg" : x.Photo)));
         }

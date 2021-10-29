@@ -9,6 +9,13 @@ import MyPhotoInput from '../../common/MyPhotoInput';
 import { RegisterUser } from '../../../actions/RegisterUser';
 import EclipseWidget from '../../common/louding';
 import {push} from 'connected-react-router';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
+
+
+toast.configure();
+
+
 
 const Register = () => {
 
@@ -27,6 +34,7 @@ const Register = () => {
     const titleRef = useRef();
     const [invalid, setInvalid] = useState([]);
 
+
     const onSubmitHandler = async (values) => {
 
         console.log("errors", errors);
@@ -35,7 +43,10 @@ const Register = () => {
             Object.entries(values).forEach(([key, value]) => formData.append(key, value));
             dispatch(RegisterUser(formData))
                 .then(result => {
-                    dispatch(push("/"));
+
+                    toast.warn ("Вы удачно зарегистрировались",{position: toast.POSITION.BOTTOM_RIGHT,autoClose:5000});
+                                     
+                   dispatch(push("/"));
                 })
                 .catch(ex=> {
                     Object.entries(ex.errors).forEach(([key, values]) => {
@@ -54,6 +65,7 @@ const Register = () => {
         }
     }
 
+    
     
 
     return (
