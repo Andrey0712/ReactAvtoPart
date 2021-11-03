@@ -11,7 +11,7 @@ import RegisterPage from './cocmponents/auth/Register';
 import LoginPage from './cocmponents/auth/Login';
 import UsersPage from './cocmponents/userlist';
  import HomePage from './cocmponents/home';
-
+ import EditPage from './cocmponents/userlist/Edit';
 
 
  function App() {
@@ -35,6 +35,10 @@ import UsersPage from './cocmponents/userlist';
             <Route exact path="/users">
               <UsersPage />
               </Route> 
+
+              <Route exact path="/edit">
+              <EditPage/>
+          </Route>
 
           </Switch>
         </div>

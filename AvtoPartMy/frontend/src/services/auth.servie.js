@@ -17,9 +17,7 @@ class AuthDataService {
                 }
             });
     }
-    // getdata(data) {
-    //     return http.get("api/account/getusers", data);        
-    // }  
+     
     
 }
 
