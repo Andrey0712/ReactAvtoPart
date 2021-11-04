@@ -86,6 +86,7 @@ namespace AvtoPartMy
             services.AddControllersWithViews().AddFluentValidation();
 
             services.AddTransient<IValidator<RegistrateViewModels>, UserValidator>();
+            services.AddTransient<IValidator<UpdateViewUser>, UserUpdateValidator>();
 
             services.AddAutoMapper(typeof(UserView));
 

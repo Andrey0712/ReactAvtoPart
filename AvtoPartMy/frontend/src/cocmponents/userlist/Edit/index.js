@@ -2,46 +2,36 @@ import React, {useRef,useState} from 'react'
 import { Formik, Form } from 'formik'
 import TextInput from '../../common/MyTextInput'
 import { useDispatch } from 'react-redux';
-import validate from '../../../cocmponents/auth/Register/validation'
 import { useSelector } from 'react-redux'
 import MyPhotoInput from '../../common/MyPhotoInput';
-import EclipseWidget from '../../common/louding';
+ import EclipseWidget from '../../common/louding';
 import {push} from 'connected-react-router';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import { EditUser } from '../../../actions/editUser';
+import validateEdit from './validationEdit';
 
 toast.configure();
 
 const Edit = () => {
 
     var url = new URL(window.location.href);
-    var e_mail = url.searchParams.get("email")
-
-    const userId = e_mail;
+    const userId = url.searchParams.get("email")
+    
     const {list}=useSelector(res=>res.user);
     console.log("Id current user:", userId);   
 
-    //find user for delete from id.
-    const usercurrent=list.find(user=>user.email==userId);
-    // const initState = {
-    //     email: '',
-    //     name: '',
-    //     photo: null
-    //     // password: '',
-    //     // confirmpassword: ''          
-
-    // }
+    
     const initState = {        
-        email:usercurrent.email,
-        name: usercurrent.name,
-        photo:null,       
-        password:'',
-        confirmpassword:''
+        email:'',
+        name: '',
+        photo:null      
+        // password:'',
+        // confirmpassword:''
     }  
 
     const dispatch = useDispatch();
-    const { loading, errors } = useSelector(state => state.auth);
+    const {loading, errors } = useSelector(state => state.auth);
     const refFormik = useRef();
     const titleRef = useRef();
     const [invalid, setInvalid] = useState([]);
@@ -57,8 +47,8 @@ const Edit = () => {
                 .then(result => {
 
                     toast.warn ("Supper",{position: toast.POSITION.BOTTOM_RIGHT,autoClose:5000});
-                    dispatch(push("/user"));           
-                   //dispatch(push("/"));
+                    // dispatch(push("/user"));           
+                   dispatch(push("/"));
                 })
                 .catch(ex=> {
                     Object.entries(ex.errors).forEach(([key, values]) => {
@@ -84,7 +74,7 @@ const Edit = () => {
 
         <div className="row">
             <div className="offset-md-3 col-md-6">
-            <h1 ref={titleRef} className="text-center" >Update</h1>
+            <h1 ref={titleRef} className="text-center" >Update {userId}</h1>
             {invalid && invalid.length>0 &&
                     <div className="alert alert-danger">
                         <ul>
@@ -104,7 +94,7 @@ const Edit = () => {
                 <Formik
                     innerRef = {refFormik}
                     initialValues={initState}
-                    validationSchema={validate()}
+                    validationSchema={validateEdit()}
                     onSubmit={onSubmitHandler}
                 >
                     <Form>
@@ -126,7 +116,7 @@ const Edit = () => {
                         refFormik={refFormik}
                         field="Photo"/>
 
-                        <TextInput
+                        {/* <TextInput
 
                             label="Password"
                             name="password"
@@ -139,7 +129,7 @@ const Edit = () => {
                             name="confirmpassword"
                             id="confirmpassword"
                             type="password"
-                        />
+                        /> */}
                         <button type="submit" className="btn btn-primary">Update</button>
                     </Form>
                 </Formik>

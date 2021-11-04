@@ -64,16 +64,16 @@ namespace AvtoPartMy.Controllers
 
         [HttpPost]
         [Route("edit")]
-        public async Task<IActionResult> EditUser([FromForm] RegistrateViewModels model)
+        public async Task<IActionResult> EditUser([FromForm] UpdateViewUser model)
         {
             var res = _context.Users.FirstOrDefault(x => x.Email == model.Email);
 
             if (model == null)
             {
-                return BadRequest(new { message = "No model data" });
+                return BadRequest(new { message = "Не зашла инфа" });
             }
 
-            res.Email = model.Email;
+            //res.Email = model.Email;
             res.UserName = model.Name;
             
 
@@ -103,7 +103,7 @@ namespace AvtoPartMy.Controllers
             }
             _context.SaveChanges();
 
-            return Ok(new { message = "User updated" });
+            return Ok(new { message = "ok" });
         }
 
 

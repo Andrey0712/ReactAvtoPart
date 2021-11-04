@@ -7,7 +7,7 @@ const validate=()=>{
         email: Yup.string()
             .email('Введіть валідні дані')
             .required('Введіть пошту'),
-            name: Yup.string()
+        name: Yup.string()
             .required("Вкажіть прізвище"),  
         password: Yup.string()
             .required('Вкажіть пароль.')
