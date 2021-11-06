@@ -192,6 +192,7 @@ namespace AvtoPartMy
                 }
             });
             app.SeedData();
+            app.SeedProd();
         }
     }
 }

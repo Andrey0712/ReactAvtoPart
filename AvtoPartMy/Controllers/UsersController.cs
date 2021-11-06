@@ -36,6 +36,7 @@ namespace AvtoPartMy.Controllers
             _jwtTokenService = jwtTokenService;
             _host = host;
         }
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
