@@ -51,17 +51,7 @@ namespace AvtoPartMy.Services
             using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppEFContext>();
-                //if (!context.Products.Any())
-                //{
-                //    //var prod = new Product
-                //    //{
-                //    //    Name = "мед",
-                //    //    Price = 200,
-                //    //    Photo = "https://storage1b.censor.net/images/b/1/4/e/b14e192c4f2065a59f3b98efaf4a937e/original.jpg"
-                //    //};
-                //    context.Products.Add(prod);
-                //    context.SaveChanges();
-                //}
+                
 
                 if (!context.Products.Any())
                 {
@@ -71,19 +61,19 @@ namespace AvtoPartMy.Services
                                         {
                                             Name = "мед",
                                             Price = 200,
-                                            Photo = "https://storage1b.censor.net/images/b/1/4/e/b14e192c4f2065a59f3b98efaf4a937e/original.jpg"
+                                            Photo = "1.jpg"
                                         },
                                     new Product
                                         {
                                             Name = "сало",
                                             Price = 100,
-                                            Photo = "https://vesti.ua/wp-content/uploads/2020/06/kak-zasolit-salo-528x352.jpg"
+                                            Photo = "2.jpg"
                                         },
                                     new Product
                                         {
                                             Name = "рыба",
                                             Price = 300,
-                                            Photo = "https://kh-news.net/media/k2/items/src/3978ec5605c1f9eee2acef9b6f315dfb.jpg"
+                                            Photo = "3.jpg"
                                         },
 
                                 };

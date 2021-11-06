@@ -3,7 +3,7 @@ import {useDispatch} from "react-redux";
 import {useSelector} from "react-redux";
 import http from "../../http_common";
 import { getProduct } from '../../actions/products';
-import productsService from "../../services/product.service";
+
 
 
 const HomePage = () => {
@@ -17,7 +17,7 @@ const HomePage = () => {
 
     const dispatch = useDispatch();
     //const list = useSelector(state => state.users.list);
-    const { products } = useSelector(state => state.user);
+    const { list } = useSelector(state => state.prod);
      
     useEffect(()=>
     {
@@ -28,9 +28,9 @@ const HomePage = () => {
     return(
               
             
-            <div className="offset-2 col-md-8">
-                <h1>Список продуктів</h1>    
-            <table className="table table-striped ">
+            <div className="offset-2 col-md-6 ">
+              <h1 className="text-center">Список продуктів</h1>    
+                <table class="table table-success table-striped">
                 <thead className="thead-dark">
                     <tr>
                     
@@ -42,11 +42,11 @@ const HomePage = () => {
                 </thead>
                 <tbody>
                 {                    
-                  products && products.map((item, index) => 
+                  list && list.map((item, index) => 
                   <tr id={item.id} key={index}>
                                 <td>
                                 {/* <img width="60" height="60" src={'/images/' + item.image} alt="no image"/> `/edit/${item.email}` */  }
-                                    <img src={http.defaults.baseURL+item.photo} alt="no foto" width="60" height="60"/>
+                                    <img src={'/images/'+item.photo} alt="no foto" width="60" height="60"/>
                                 </td>
                                 <td>{item.name}</td>
                                 <td>{item.price}</td>
