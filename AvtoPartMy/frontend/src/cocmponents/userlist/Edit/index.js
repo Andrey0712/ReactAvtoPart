@@ -47,8 +47,8 @@ const Edit = () => {
                 .then(result => {
 
                     toast.warn ("Supper",{position: toast.POSITION.BOTTOM_RIGHT,autoClose:5000});
-                    // dispatch(push("/user"));           
-                   dispatch(push("/"));
+                    dispatch(push("/user"));           
+                   //dispatch(push("/"));
                 })
                 .catch(ex=> {
                     Object.entries(ex.errors).forEach(([key, values]) => {

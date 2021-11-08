@@ -1,52 +1,51 @@
 
 import './App.css';
-import React from 'react';
+import React, {Suspense} from 'react';
 import {
- 
   Switch,
   Route
 } from "react-router-dom";
-import  Header  from './cocmponents/header';
-import RegisterPage from './cocmponents/auth/Register';
-import LoginPage from './cocmponents/auth/Login';
-import UsersPage from './cocmponents/userlist';
- import HomePage from './cocmponents/home';
- import EditPage from './cocmponents/userlist/Edit';
+// import  Header  from './cocmponents/header';
+// import RegisterPage from './cocmponents/auth/Register';
+// import LoginPage from './cocmponents/auth/Login';
+// import UsersPage from './cocmponents/userlist';
+//  import HomePage from './cocmponents/home';
+//  import EditPage from './cocmponents/userlist/Edit';
+ const DefaultLayout = React.lazy(()=>import('./cocmponents/containers/DefaultLayout'));
+ const AdminLayout = React.lazy(()=>import('./cocmponents/containers/AdminLayout'));
 
+//  function App() {
+//   return (
+//     <>
+//         <Header />
+//         <div className="container">
+//           <Switch>
+//           <Route exact path="/"><HomePage /></Route>
+//             <Route exact path="/register"><RegisterPage /></Route>
+//             <Route exact path="/login"><LoginPage /></Route>
+//             <Route exact path="/users"><UsersPage /></Route> 
+//               <Route exact path="/edit"><EditPage/></Route>
+//           </Switch>
+//         </div>
+//       </>
+//     );
+//   }
+// export default App;
+class App extends React.Component {
 
- function App() {
-  return (
-    <>
-        <Header />
-        <div className="container">
+  render() {
+    return (
+      <>
+        <Suspense fallback={<div>Загрузка ...</div>}>
           <Switch>
-          <Route exact path="/">
-              <HomePage />
-            </Route>
-
-            <Route exact path="/register">
-              <RegisterPage />
-            </Route>
-
-            <Route exact path="/login">
-              <LoginPage />
-            </Route>
-
-            <Route exact path="/users">
-              <UsersPage />
-              </Route> 
-
-              <Route exact path="/edit">
-              <EditPage/>
-          </Route>
-
+            <Route path="/admin" name="Admin" render={props=> <AdminLayout {...props}/>} />
+            <Route path="/" name="Default" render={props=> <DefaultLayout {...props}/>} />
           </Switch>
-        </div>
-      </>
-  
-  );
-  
+        </Suspense>
+        </>
+      
+    );
+  }
 }
-
 
 export default App;
