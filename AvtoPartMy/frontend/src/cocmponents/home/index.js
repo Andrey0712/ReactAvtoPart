@@ -25,12 +25,13 @@ const HomePage = () => {
         console.log("Request to server");
     },[]);
     console.log("Render component users")
+    
     return(
               
             
             <div className="offset-2 col-md-6 ">
               <h1 className="text-center">Список продуктів</h1>    
-                <table class="table table-success table-striped">
+                <table className="table table-success table-striped">
                 <thead className="thead-dark">
                     <tr>
                     

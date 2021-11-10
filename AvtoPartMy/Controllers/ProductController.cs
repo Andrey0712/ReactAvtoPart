@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvtoPartMy.Controllers
@@ -18,18 +19,17 @@ namespace AvtoPartMy.Controllers
     public class ProductController : ControllerBase
     {
         private readonly AppEFContext _context;
-        
+        private readonly IMapper _mapper;
 
-        public ProductController(AppEFContext context
-            )
+        public ProductController(AppEFContext context,
+            IMapper mapper)
         {
             _context = context;
-           
-            
+            _mapper = mapper;
+
         }
 
         [HttpGet]
-        
 
         public async Task<IActionResult> Get()
         {
@@ -37,49 +37,58 @@ namespace AvtoPartMy.Controllers
             return Ok(products);
         }
 
-        //[HttpPost]
-        //[Route("addProduct")]
-        //public async Task<IActionResult> RegisterAsync([FromForm] ProductModel model)
+        [HttpPost]
+        [Route("add")]
+        public async Task<IActionResult> Add([FromForm] ProductAddViewModel model)
+        {
+            try
+            {
+                string fileName = String.Empty;
+                var product = _mapper.Map<Product>(model);
+
+                if (model.Photo != null)
+                {
+                    string randomFilename = Path.GetRandomFileName() +
+                        Path.GetExtension(model.Photo.FileName);
+
+                    string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
+                    fileName = Path.Combine(dirPath, randomFilename);
+                    using (var file = System.IO.File.Create(fileName))
+                    {
+                        model.Photo.CopyTo(file);
+                    }
+                    product.Photo = randomFilename;
+                }
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    invalid = ex.Message
+                });
+            }
+        }
+
+        //[HttpGet]
+        ////[Route("list")]
+        //public async Task<IActionResult> Get()
         //{
-        //           
-        //    string fileNameUser = string.Empty;
-
-        //    
-        //    if (model.Photo != null)
-        //    {
-        //        var ext = Path.GetExtension(model.Photo.FileName);
-        //        fileNameUser = Path.GetRandomFileName() + ext;
-        //        var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
-        //        var filePath = Path.Combine(dir, fileNameUser);
-
-        //        using (var stream = System.IO.File.Create(filePath))
-        //        {
-        //            await model.Photo.CopyToAsync(stream);
-        //        }
-        //    }
-
         //    try
         //    {
-
-        //        var product = new Product
-        //        {
-        //            Id= model.Id,
-        //            Name = model.Name,
-        //            Photo = fileNameUser,
-        //            Price= model.Price
-
-        //        };
-
-
-        //        _context.Products.Add(product);
-        //        _context.SaveChanges();
-
-        //        return Ok();
+        //        Thread.Sleep(2000);
+        //        var model = await _context.Products
+        //            .Select(x => _mapper.Map<ProductItemViewModel>(x)).ToListAsync();
+        //        return Ok(model);
         //    }
-        //    catch
+        //    catch (Exception ex)
         //    {
-        //        return BadRequest(new { message = "Щось пішло не так - помилка з БД" });
-
+        //        return BadRequest(new
+        //        {
+        //            invalid = ex.Message
+        //        });
         //    }
         //}
 

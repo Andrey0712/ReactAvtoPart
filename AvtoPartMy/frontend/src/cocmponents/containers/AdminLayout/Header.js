@@ -29,7 +29,14 @@ const Header = () => {
                             <Link className="nav-link active" aria-current="page" to="/users">Користувачі</Link>
                         </li>
                     </ul>
-
+                    <ul className="navbar-nav">
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/profile">{username}</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/logout" >Вихід</Link>
+                        </li>
+                    </ul>
                     {/* {!isAuth ?
                         <ul className="navbar-nav">
                             <li className="nav-item">
@@ -40,14 +47,7 @@ const Header = () => {
                             </li>
                         </ul>
                         :
-                        <ul className="navbar-nav">
-                             <li className="nav-item">
-                                <Link className="nav-link" to="/profile">{username}</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/logout" >Вихід</Link>
-                            </li>
-                        </ul>
+                        
                     } */}
                     
 

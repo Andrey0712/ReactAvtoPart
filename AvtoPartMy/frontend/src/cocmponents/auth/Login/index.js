@@ -1,11 +1,13 @@
-import React, {useRef} from 'react'
+import React, {useRef,useState } from 'react'
 import { Formik,Form } from 'formik'
 import TextInput from '../../common/MyTextInput'
 import  validateLog  from './validation'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import EclipseWidget from '../../common/louding';
-import { LoginUser } from '../../../actions/LoginUser';
+import { LoginUser, isRole } from '../../../actions/LoginUser';
+import jwt from 'jsonwebtoken';
+import { push } from 'connected-react-router';
 
 const Login =()=> {
 
@@ -18,6 +20,8 @@ const Login =()=> {
 const dispatch = useDispatch();
 const { loading } = useSelector(state => state.auth);
 const refFormik = useRef();
+const [invalid, setInvalid] = useState([]);
+const titleRef = useRef();
 
 const onSubmitHandler = async (values) => {
 
@@ -27,6 +31,7 @@ const onSubmitHandler = async (values) => {
         const formData = new FormData();
         Object.entries(values).forEach(([key, value]) => formData.append(key, value));
         dispatch(LoginUser(formData));
+        
         
     }
     catch (problem) {
@@ -38,6 +43,29 @@ const onSubmitHandler = async (values) => {
 
 }
 
+// const onSubmitHandler=(values) => {
+//     try {            
+       
+//         dispatch(LoginUser(values))
+//             .then(result => {
+//                 let user =jwt.decode(result);
+//                 if (isRole(user, 'admin')) {
+//                     dispatch(push("/admin"));
+//                     return;
+//                 }
+//                 dispatch(push("/"));
+//             })
+//             .catch(ex => {
+//                 console.log("exception: ", ex);
+//                 setInvalid(ex.errors.invalid);
+//                 titleRef.current.scrollIntoView({ behavior: 'smooth' })
+                
+//             });
+//     }
+//     catch (error) {
+//         console.log("Server is bad register from", error);
+//     }
+// }
 
 // const {errorvalid} = useSelector(res=>res.valid);
 // console.log("Error valid",errorvalid);

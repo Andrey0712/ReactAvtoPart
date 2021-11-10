@@ -3,17 +3,17 @@ import {Redirect, Route, Switch } from 'react-router-dom';
 import Layout from './Layout';
 import AdmintRoutes from '../../../routes/AdminRoutes';
  import { useSelector, useDispatch } from 'react-redux';
-// import { isRole } from '../../../actions/auth';
+ //import { isRole } from '../../../actions/LoginUser';
 
 const AdminLayout = () => {
 
     const dispatch = useDispatch();
 
-    const {isAuth, user} = useSelector(redux => redux.auth);
+    const {isAuth, role} = useSelector(redux => redux.auth);
 
     return (
         //isAuth && isRole(user,'admin') ?
-        isAuth ?
+        isAuth && role=='admin'?
         <Layout>
             <Suspense fallback={<div>Загрузка ...</div>}>
                 <Switch>
@@ -33,7 +33,7 @@ const AdminLayout = () => {
                 </Switch>
             </Suspense>
         </Layout>
-         : <Redirect to='/login'/>
+          : <Redirect to='/login'/>
     );
 }
 
