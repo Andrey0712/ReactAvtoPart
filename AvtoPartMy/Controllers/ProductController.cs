@@ -29,13 +29,13 @@ namespace AvtoPartMy.Controllers
 
         }
 
-        [HttpGet]
+        //[HttpGet]
 
-        public async Task<IActionResult> Get()
-        {
-            var products = await _context.Products.ToListAsync();
-            return Ok(products);
-        }
+        //public async Task<IActionResult> Get()
+        //{
+        //    var products = await _context.Products.ToListAsync();
+        //    return Ok(products);
+        //}
 
         [HttpPost]
         [Route("add")]
@@ -72,25 +72,25 @@ namespace AvtoPartMy.Controllers
             }
         }
 
-        //[HttpGet]
-        ////[Route("list")]
-        //public async Task<IActionResult> Get()
-        //{
-        //    try
-        //    {
-        //        Thread.Sleep(2000);
-        //        var model = await _context.Products
-        //            .Select(x => _mapper.Map<ProductItemViewModel>(x)).ToListAsync();
-        //        return Ok(model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            invalid = ex.Message
-        //        });
-        //    }
-        //}
+        [HttpGet]
+        //[Route("list")]
+        public async Task<IActionResult> Get()
+        {
+            try
+            {
+                Thread.Sleep(2000);
+                var model = await _context.Products
+                    .Select(x => _mapper.Map<ProductItemViewModel>(x)).ToListAsync();
+                return Ok(model);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    invalid = ex.Message
+                });
+            }
+        }
 
     }
 }

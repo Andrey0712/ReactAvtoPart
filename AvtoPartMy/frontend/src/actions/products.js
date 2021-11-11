@@ -4,12 +4,14 @@ import productService from "../services/product.service";
 
 export const getProduct= () => async (dispatch) => {
     try {
-        const res = await productService.get_list_prod();
+        const {data} = await productService.get_list_prod();
         dispatch({
             type: PRODUCTS,
-            data: res.data
+            payload: data
         });
+        return Promise.resolve();
     } catch(err) {
-        console.log(err);
+        const {data} = err.response;
+        return Promise.reject(data);
     }
 }

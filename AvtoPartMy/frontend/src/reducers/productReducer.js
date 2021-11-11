@@ -5,17 +5,18 @@ const initialState = {
     list: []
 };
 
-function productReducer(products = initialState, action) {
-    const {type, data} = action;
+function productReducer(state  = initialState, action) {
+    const {type, payload} = action;
     switch(type){
         case PRODUCTS: {
             return {
-                list: data
+                ...state,
+                list: payload
             }
             
         }
         default: 
-            return products;
+            return state ;
     }
 }
 export default productReducer;
