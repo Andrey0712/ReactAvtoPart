@@ -48,7 +48,7 @@ namespace AvtoPartMy.Models
                .ForMember(x => x.Category, opt => opt.MapFrom(x => "Accessories"))
                .ForMember(x => x.Quantity, opt => opt.MapFrom(x => 25))
                .ForMember(x => x.InventoryStatus, opt => opt.MapFrom(x => "INSTOCK"))
-               .ForMember(x => x.Rating, opt => opt.MapFrom(x => 5));
+               .ForMember(x => x.Rating, opt => opt.MapFrom(x => new Random().Next(1, 5)));
         }
     }
     
