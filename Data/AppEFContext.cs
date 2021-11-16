@@ -1,4 +1,5 @@
-﻿using Data.Entities.Identity;
+﻿using Data.Entities;
+using Data.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ namespace Data
 
         }
         public DbSet<Product> Products { get; set; }
+        public DbSet<CartEntity> CartEntity { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

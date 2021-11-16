@@ -27,7 +27,7 @@ const onClickLogout = (e) => {
 }
     
         const {isAuth,username} = useSelector(res=>res.auth);
-       
+        const {cart} = useSelector(redux => redux);
    
 console.log("Auth user info ", isAuth);
     return (
@@ -66,6 +66,12 @@ console.log("Auth user info ", isAuth);
                         </ul>
                         :
                         <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/cart">
+                                    <i className="pi pi-shopping-cart" style={ {fontSize: "2rem"}}></i>
+                                    {cart.count}
+                                </Link>
+                            </li>
                              <li className="nav-item">
                                 <Link className="nav-link" to="/profile">{username}</Link>
                             </li>

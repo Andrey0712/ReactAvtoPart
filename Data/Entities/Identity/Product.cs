@@ -22,5 +22,6 @@ namespace Data.Entities.Identity
 
         [StringLength(255)]
         public string Photo { get; set; }
+        public virtual ICollection<CartEntity> CartEntities { get; set; }
     }
 }

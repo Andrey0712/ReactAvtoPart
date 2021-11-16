@@ -11,5 +11,6 @@ namespace Data.Entities.Identity
     {
         public string FotoUser { get; set; }
         public virtual ICollection<AppUserRole> UserRoles { get; set; }
+        public virtual ICollection<CartEntity> CartEntities { get; set; }
     }
 }

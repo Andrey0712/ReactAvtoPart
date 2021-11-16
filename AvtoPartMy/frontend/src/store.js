@@ -5,6 +5,7 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import usersReducer from "./reducers/usersReducer";
 import productReducer from "./reducers/productReducer";
+import cartReducer from "./reducers/cartReducer";
 
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     auth: authReducer,
     user:usersReducer,
     prod:productReducer,
+    cart:cartReducer,
     router: connectRouter(history)
 });
 
