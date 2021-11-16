@@ -21,7 +21,7 @@ namespace Data
 
         }
         public DbSet<Product> Products { get; set; }
-        public DbSet<CartEntity> CartEntity { get; set; }
+        public DbSet<CartEntity> Carts { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
