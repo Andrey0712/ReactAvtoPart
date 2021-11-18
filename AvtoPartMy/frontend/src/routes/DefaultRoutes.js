@@ -7,6 +7,7 @@ const LoginPage = React.lazy(() => import('../cocmponents/auth/Login'));
 const RegisterPage = React.lazy(() => import("../cocmponents/auth/Register"));
 const UsersPage = React.lazy(() => import("../cocmponents/userlist"));
 const EditPage = React.lazy(() => import("../cocmponents/userlist/Edit"));
+const CartDialogPage = React.lazy(() => import("../cocmponents/home/cartDialog"));
 
 const defaultRoutes = [
     { path: '/', exact: true, name: 'Головна', component: HomePage  },
@@ -14,6 +15,7 @@ const defaultRoutes = [
     { path: '/login', exact: true, name: 'Вхід', component: LoginPage  },
     { path: '/register', exact: true, name: 'Реєстрація', component: RegisterPage  },
     { path: '/users', exact: true, name: 'Users', component: UsersPage  },
-    { path: '/edit', exact: true, name: 'UsersEdit', component: EditPage  }
+    { path: '/edit', exact: true, name: 'UsersEdit', component: EditPage  },
+    { path: '/cart', exact: true, name: 'CartDialog', component: CartDialogPage  }
 ];
 export default defaultRoutes;

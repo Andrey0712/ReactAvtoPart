@@ -40,7 +40,7 @@ namespace AvtoPartMy.Controllers
             try
             {
                 string userName = User.FindFirst("name")?.Value;//получаем имя авторизованого юзера
-                var user = await _userManager.FindByEmailAsync(userName);//ищем авторизованого юзера в БД
+                var user = await _userManager.FindByNameAsync(userName);//ищем авторизованого юзера в БД
                 var cart = _context.Carts//получаем карзину на основе модели
                     .SingleOrDefault(x => x.UserId == user.Id && x.ProductId == model.ProductId);
                 if (cart == null)
@@ -78,7 +78,7 @@ namespace AvtoPartMy.Controllers
         {
             try
             {
-                Thread.Sleep(2000);
+                //Thread.Sleep(2000);
                 string userName = User.FindFirst("name")?.Value;
                 var user = await _userManager.FindByNameAsync(userName);
                 var model = await _context.Carts

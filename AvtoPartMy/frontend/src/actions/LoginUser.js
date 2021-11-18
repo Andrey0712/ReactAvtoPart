@@ -4,6 +4,8 @@ import { LOGIN_AUTH, REGISTER_BEGIN, SET_ROLE } from '../constants/actionTypes';
 import authServie from '../services/auth.servie';
 import authTokenRequest from '../services/auth_request';
 import {push} from 'connected-react-router';
+import { getCartUser } from './cart';
+
 //import setAuthorizationToken from '../Utils/setAuthorizationToken';
 //import jwt from "jsonwebtoken";
 
@@ -41,6 +43,9 @@ export const LoginUser=(model)=>async(dispatch)=>{
         var jwt_token=result.data.token;
         var verified = jwt.decode(jwt_token); 
         dispatch({type: LOGIN_AUTH, payload: verified});
+
+        dispatch(getCartUser());
+
         localStorage.setItem('Current user',jwt_token);
         authTokenRequest(jwt_token);  
         dispatch({type:REGISTER_BEGIN});

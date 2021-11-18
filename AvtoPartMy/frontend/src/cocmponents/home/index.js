@@ -10,7 +10,9 @@ import './home.css';
 import EclipseWidget from '../common/louding';
 import http from "../../http_common";
 import { getProduct } from '../../actions/products';
-
+import { AddCartProduct } from "../../actions/cart";
+import { Dialog } from 'primereact/dialog';
+import CartDialog from "./cartDialog";
 
 
 // const HomePage = () => {
@@ -60,6 +62,7 @@ const HomePage = () => {
     const dispatch = useDispatch();
     const { list } = useSelector(state => state.prod);
 
+    const[visible,setVisible]=useState(false);
     const [layout, setLayout] = useState('grid');
     const [sortKey, setSortKey] = useState(null);
     const [sortOrder, setSortOrder] = useState(null);
@@ -86,6 +89,27 @@ const HomePage = () => {
         } 
     }, []);
 
+    const onClickAddToCart =(e, id) => {
+        e.preventDefault();
+        try {            
+            var data = {
+                productId: id,
+                quantity: 1
+            }
+            dispatch(AddCartProduct(data))
+                .then(() => {
+                    setVisible(true);
+                    console.log("Add to cart competed!");
+                })
+                .catch(ex => {
+                });
+        }
+        catch (error) {
+            console.log("Server is bad register from", error);
+        }
+
+    }
+
 
     const onSortChange = (event) => {
         const value = event.value;
@@ -106,7 +130,8 @@ const HomePage = () => {
         return (
             <div className="p-col-12">
                 <div className="product-list-item">
-                    <img src={`${data.image}`}  height="200" onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={data.name} />
+                    <img src={`${data.image}`}  height="200" onError={(e) => 
+                        e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={data.name} />
                     <div className="product-list-detail">
                         <div className="product-name">{data.name}</div>
                         <div className="product-description">{data.description}</div>
@@ -115,7 +140,8 @@ const HomePage = () => {
                     </div>
                     <div className="product-list-action">
                         <span className="product-price">{data.price} грн.</span>
-                        <Button icon="pi pi-shopping-cart" label="Add to Cart" disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
+                        <Button icon="pi pi-shopping-cart" label="Add to Cart" onClick={(e)=>onClickAddToCart(e, data.id)} 
+                        disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
                         <span className={`product-badge status-${data.inventoryStatus.toLowerCase()}`}>{data.inventoryStatus}</span>
                     </div>
                 </div>
@@ -135,14 +161,16 @@ const HomePage = () => {
                         <span className={`product-badge status-${data.inventoryStatus.toLowerCase()}`}>{data.inventoryStatus}</span>
                     </div>
                     <div className="product-grid-item-content">
-                    <img src={`${data.image}`}  height="200" onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={data.name} />
+                    <img src={`${data.image}`}  height="200" 
+                    onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={data.name} />
                         <div className="product-name">{data.name}</div>
                         <div className="product-description">{data.description}</div>
                         <Rating value={data.rating} readOnly cancel={false}></Rating>
                     </div>
                     <div className="product-grid-item-bottom">
                         <span className="product-price">{data.price} грн.</span>
-                        <Button icon="pi pi-shopping-cart" label="Add to Cart" disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
+                        <Button icon="pi pi-shopping-cart" label="Add to Cart" onClick={(e)=>onClickAddToCart(e, data.id)} 
+                        disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
                     </div>
                 </div>
             </div>
@@ -176,6 +204,16 @@ const HomePage = () => {
 
     return (
         <>
+        <Dialog
+                // header='Dialog'
+                visible={visible}
+                style={{ width: '50vw' }}
+                modal={true}
+                onHide={() => setVisible(false)}
+                maximizable={false}>
+                <CartDialog />
+            </Dialog>
+
             <div className="dataview-demo">
                 <div className="card">
                     <DataView value={list} layout={layout} header={header}
